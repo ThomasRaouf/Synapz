@@ -61,95 +61,97 @@
               <h2>Welcome back, Alex 👋</h2>
               <p>Ready to keep learning? Pick up where you left off or add new study material.</p>
             </div>
-          <btn id="upload-material-btn" class="btn-primary">
-            + Upload Material
-          </btn>
-        </section>
-        
-        <!-- Upload Toast / Message (hidden by default) -->
-        <div id="upload-message" class="upload-message hidden" role="alert">
-          <p><strong>Demo Mode:</strong> Actual file uploading will be implemented in a future update.</p>
-        </div>
+            <btn id="upload-material-btn" class="btn-primary">
+              + Upload Material
+            </btn>
+          </section>
+          
+          <!-- Upload Toast / Message (hidden by default) -->
+          <div id="upload-message" class="upload-message hidden" role="alert">
+            <p><strong>Demo Mode:</strong> Actual file uploading will be implemented in a future update.</p>
+          </div>
 
-        <!-- Recent Materials -->
+          <!-- Recent Materials -->
+          <section class="recent-materials-section">
+            <h3>Recent Materials</h3>
+            <div class="materials-grid">
+              <!-- Cards will be injected by main.js -->
+            </div>
+          </section>
+        </div> <!-- ------------------------------------------------- ------------------------------------------------------------------------------------------------------->
+      
+        <!-- Materials View -->
+        <div id="view-materials" class="view-section" style="display: none;">
+          <section class="welcome-section" style="margin-bottom: 24px;">
+            <div class="welcome-text">
+              <h2>Materials</h2>
+              <p>View and manage all your study materials.</p>
+          </div>
+        </section>
         <section class="recent-materials-section">
-          <h3>Recent Materials</h3>
           <div class="materials-grid">
             <!-- Cards will be injected by main.js -->
-          </div>
-        </section>
-      </div> <!-- ------------------------------------------------- ------------------------------------------------------------------------------------------------------->
-      
-      <!-- Materials View -->
-      div id="view-materials" class="view-section" style="display: none;">
-        <section class="materials-section" style="margin-bottom: 24px;">
-          div class="welcome-text">
-          <h2>Materials</h2>
-          <p>View and manage all your study materials.</p>
-        </div>
-      </section>
-      <section class="recent-materials-section">
-        <div class="materials-grid">
-          <!-- Cards will be injected by main.js -->
-           </div>
-      </section>
-    </div>
-
-    <!-- Flashcards View -->
-    <div id="view-flashcards" class="view-section" style="display: none;">
-        <!-- Interactive Flashcards View -->
-        <section class="flashcards-section">
-          <div class="flashcards-container">
-            <div class="flashcard-header">
-              <span class="card-counter" id="card-counter">Card 1 of 5</span>
             </div>
+        </section>
+      </div>
 
-            <!-- Flip Card Container -->
-            <div class="flashcard-wrapper" id="flashcard-wrapper">
-              <div class="flashcard-inner" id="flashcard-inner">
-                <!-- Front Face -->
-                <div class="flashcard-face flashcard-front">
-                  <span class="card-type-tag">Question</span>
-                  <p class="card-text" id="card-text">What is Newton's 2nd law?</p>
-                  <btn class="reveal-btn" id="btn-reveal">Reveal Answer</btn>
-                </div>
-                <!-- Back Face -->
-                <div class="flashcard-face flashcard-back">
-                  <span class="card-type-tag">Answer</span>
-                  <p class="card-text" id="card-answer">F = ma</p>
+      <!-- Flashcards View -->
+      <div id="view-flashcards" class="view-section" style="display: none;">
+          <!-- Interactive Flashcards View -->
+          <section class="flashcards-section">
+            <div class="flashcards-container">
+              <div class="flashcard-header">
+                <span class="card-counter" id="card-counter">Card 1 of 5</span>
+              </div>
+
+              <!-- Flip Card Container -->
+              <div class="flashcard-wrapper" id="flashcard-wrapper">
+                <div class="flashcard-inner" id="flashcard-inner">
+                  <!-- Front Face -->
+                  <div class="flashcard-face flashcard-front">
+                    <span class="card-type-tag">Question</span>
+                    <p class="card-text" id="card-text">What is Newton's 2nd law?</p>
+                    <btn class="reveal-btn" id="btn-reveal">Reveal Answer</btn>
+                  </div>
+                  <!-- Back Face -->
+                  <div class="flashcard-face flashcard-back">
+                    <span class="card-type-tag">Answer</span>
+                    <p class="card-text" id="card-answer">F = ma</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Progress Indicator Dots -->
-            <div class="progress-dots" id="progress-dots"></div>
+              <!-- Progress Indicator Dots -->
+              <div class="progress-dots" id="progress-dots"></div>
 
-            <!-- Controls -->
-            <div class="flashcard-controls">
-              <btn id="prev-card-btn" class="btn-nav" disabled>&larr; Previous</btn>
-              <btn id="next-card-btn" class="btn-nav">Next &rarr;</btn>
+              <!-- Controls -->
+              <div class="flashcard-controls">
+                <btn id="prev-card-btn" class="btn-nav" disabled>&larr; Previous</btn>
+                <btn id="next-card-btn" class="btn-nav">Next &rarr;</btn>
+              </div>
             </div>
-          </div>
-        </section>
-      </div>
-      <!-- Quizzes  View -->
-      <div id="view-quizzes" class="view-section" style="display: none;">
-        <section class="welcome-section">
-          <div class="welcome-text">
-            <h2>Quizzes</h2>
-            <p>Quiz generation and practice will be available here in a future update.</p>
-          </div>
-        </section>
-      </div>
-      <!-- Mind Maps View -->
-      <div id="view-mind-maps" class="view-section" style="display: none;">
-        <section class="welcome-section">
-          <div class="welcome-text">
-            <h2>Mind Maps</h2>
-            <p>Interactive mind map generation and visualization will be available here in a future update.</p>
-          </div>
-        </section>
-      </div>
+          </section>
+        </div>
+
+        <!-- Quizzes  View -->
+        <div id="view-quizzes" class="view-section" style="display: none;">
+          <section class="welcome-section">
+            <div class="welcome-text">
+              <h2>Quizzes</h2>
+              <p>Quiz generation and practice will be available here in a future update.</p>
+            </div>
+          </section>
+        </div>
+        
+        <!-- Mind Maps View -->
+        <div id="view-mind-maps" class="view-section" style="display: none;">
+          <section class="welcome-section">
+            <div class="welcome-text">
+              <h2>Mind Maps</h2>
+              <p>Interactive mind map generation and visualization will be available here in a future update.</p>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   </div>

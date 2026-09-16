@@ -45,31 +45,90 @@ function getStatusClass(status) {
 
 // Render Material Cards into the Grid
 function renderMaterials() {
-  const grid = document.getElementById("materials-grid");
-  if (!grid) return;
-  
-  grid.innerHTML = ""; // Clear any existing content
-  
-  recentMaterials.forEach(material => {
-    const card = document.createElement("div");
-    card.className = "material-card";
+  const grids = document.querySelectorAll(".materials-grid");
+  if (grids.length === 0) return;
+
+  grids.forEach(grid => {
+    grid.innerHTML = ""; // Clear any existing content
     
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="card-type">${material.type}</span>
-        <span class="card-status ${getStatusClass(material.status)}">${material.status}</span>
-      </div>
-      <div class="card-content">
-        <h4>${material.subject}</h4>
-        <p>${material.title}</p>
-      </div>
-      <div class="card-footer">
-        <span>${material.date}</span>
-      </div>
-    `;
-    
-    grid.appendChild(card);
+    recentMaterials.forEach(material => {
+      const card = document.createElement("div");
+      card.className = "material-card";
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="card-type">${material.type}</span>
+          <span class="card-status ${getStatusClass(material.status)}">${material.status}</span>
+        </div>
+        <div class="card-content">
+          <h4>${material.subject}</h4>
+          <p>${material.title}</p>
+        </div>
+        <div class="card-footer">
+          <span>${material.date}</span>
+        </div>
+      `;
+      
+      grid.appendChild(card);
+    });
   });
+}
+
+// Handle Client-Side Navigation
+function setupNavigation() {
+  const navItems = document.querySelectorAll(".nav-item");
+  const views = document.querySelectorAll(".view-section");
+  const pageTitle = document.querySelector(".page-title");
+  const sidebar = document.getElementById("sidebar");
+
+  navItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // Update URL without jumping
+      history.pushState(null, '', item.getAttribute("href"));
+
+      // Get target view
+      const targetViewName = item.getAttribute("data-view");
+      const targetViewId = "view-" + targetViewName;
+
+      // Update active nav state
+      navItems.forEach(nav => {
+        nav.classList.remove("active");
+        nav.removeAttribute("aria-current");
+      });
+      item.classList.add("active");
+      item.setAttribute("aria-current", "page");
+
+      // Update page title
+      if (pageTitle) {
+        pageTitle.textContent = item.textContent;
+      }
+
+      // Show target view, hide others
+      views.forEach(view => {
+        if (view.id === targetViewId) {
+          view.style.display = "block";
+        } else {
+          view.style.display = "none";
+        }
+      });
+
+      // close mobile sidebar
+      if (sidebar && sidebar.classList.contains("open")) {
+        sidebar.classList.remove("open");
+      }
+    });
+  });
+
+  // Handle initial load based on hash
+  const initialHash = window.location.hash;
+  if (initialHash) {
+    const targetLink = document.querySelector(`.nav-item[href="${initialHash}"]`);
+    if (targetLink) {
+      targetLink.click();
+    }
+  }
 }
 
 // Setup simple UI Interactions (Mock upload, mobile sidebar)
@@ -250,7 +309,7 @@ function setupUploadModal() {
     submitBtn.querySelector(".btn-loader").classList.remove("hidden");
 
     setTimeout (() => {
-      closeModal;
+      closeModal();
       const uploadMessage = document.getElementById("upload-message");
       if (uploadMessage) {
         uploadMessage.innerHTML = "<p><strong>Success!</strong> Material uploaded successfully.</p>";
@@ -272,6 +331,7 @@ function setupUploadModal() {
 
 // Initialize Dashboard when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
+  setupNavigation();
   renderMaterials();
   setupInteractions();
   setupUploadModal();
