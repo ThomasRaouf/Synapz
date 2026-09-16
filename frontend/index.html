@@ -21,11 +21,11 @@
       </div>
       <nav class="sidebar-nav">
         <ul>
-          <li><a href="#" class="nav-item active" aria-current="page">Dashboard</a></li>
-          <li><a href="#" class="nav-item">Materials</a></li>
-          <li><a href="#" class="nav-item">Flashcards</a></li>
-          <li><a href="#" class="nav-item">Quizzes</a></li>
-          <li><a href="#" class="nav-item">Mind Maps</a></li>
+          <li><a href="#dashboard" data-view="dashboard" class="nav-item active" aria-current="page">Dashboard</a></li>
+          <li><a href="#materials" data-view="materials" class="nav-item">Materials</a></li>
+          <li><a href="#flashcards" data-view="flashcards" class="nav-item">Flashcards</a></li>
+          <li><a href="#quizzes" data-view="quizzes" class="nav-item">Quizzes</a></li>
+          <li><a href="#mind-maps" data-view="mind-maps" class="nav-item">Mind Maps</a></li>
         </ul>
       </nav>
     </aside>
@@ -53,12 +53,14 @@
 
       <!-- Main Content -->
       <main class="content">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-          <div class="welcome-text">
-            <h2>Welcome back, Alex 👋</h2>
-            <p>Ready to keep learning? Pick up where you left off or add new study material.</p>
-          </div>
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view-section">
+          <!-- Welcome Section -->
+          <section class="welcome-section">
+            <div class="welcome-text">
+              <h2>Welcome back, Alex 👋</h2>
+              <p>Ready to keep learning? Pick up where you left off or add new study material.</p>
+            </div>
           <btn id="upload-material-btn" class="btn-primary">
             + Upload Material
           </btn>
@@ -72,13 +74,31 @@
         <!-- Recent Materials -->
         <section class="recent-materials-section">
           <h3>Recent Materials</h3>
-          <div class="materials-grid" id="materials-grid">
+          <div class="materials-grid">
             <!-- Cards will be injected by main.js -->
           </div>
         </section>
+      </div> <!-- ------------------------------------------------- ------------------------------------------------------------------------------------------------------->
+      
+      <!-- Materials View -->
+      div id="view-materials" class="view-section" style="display: none;">
+        <section class="materials-section" style="margin-bottom: 24px;">
+          div class="welcome-text">
+          <h2>Materials</h2>
+          <p>View and manage all your study materials.</p>
+        </div>
+      </section>
+      <section class="recent-materials-section">
+        <div class="materials-grid">
+          <!-- Cards will be injected by main.js -->
+           </div>
+      </section>
+    </div>
 
+    <!-- Flashcards View -->
+    <div id="view-flashcards" class="view-section" style="display: none;">
         <!-- Interactive Flashcards View -->
-        <section class="flashcards-section" class="flashcards-section" style="display: none;">
+        <section class="flashcards-section">
           <div class="flashcards-container">
             <div class="flashcard-header">
               <span class="card-counter" id="card-counter">Card 1 of 5</span>
@@ -111,11 +131,30 @@
             </div>
           </div>
         </section>
+      </div>
+      <!-- Quizzes  View -->
+      <div id="view-quizzes" class="view-section" style="display: none;">
+        <section class="welcome-section">
+          <div class="welcome-text">
+            <h2>Quizzes</h2>
+            <p>Quiz generation and practice will be available here in a future update.</p>
+          </div>
+        </section>
+      </div>
+      <!-- Mind Maps View -->
+      <div id="view-mind-maps" class="view-section" style="display: none;">
+        <section class="welcome-section">
+          <div class="welcome-text">
+            <h2>Mind Maps</h2>
+            <p>Interactive mind map generation and visualization will be available here in a future update.</p>
+          </div>
+        </section>
+      </div>
       </main>
     </div>
   </div>
  
-<div id="upload modal" class="modal-overlay hidden" aria-hidden="true">
+<div id="upload-modal" class="modal-overlay hidden" aria-hidden="true">
   <div class="modal-content" role ="dialog" aria-labelledby="modal-title">
     <div class="modal-header">
       <h3 id="modal-title">Add Study Material</h3>
