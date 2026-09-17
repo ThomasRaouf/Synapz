@@ -409,7 +409,7 @@ function setupFlashcards() {
     });
   }
 
-  renderCard(;)
+  renderCard();
 }
 
 // Initialize Dashboard when DOM is ready
