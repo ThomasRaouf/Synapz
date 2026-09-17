@@ -83,16 +83,15 @@ function setupNavigation() {
 
   navItems.forEach(item => {
     item.addEventListener("click", (e) => {
+      const targetViewName = item.getAttribute("data-view");
+      if (!targetViewName) return;
+
       e.preventDefault();
 
-      // Update URL without jumping
       history.pushState(null, '', item.getAttribute("href"));
 
-      // Get target view
-      const targetViewName = item.getAttribute("data-view");
       const targetViewId = "view-" + targetViewName;
 
-      // Update active nav state
       navItems.forEach(nav => {
         nav.classList.remove("active");
         nav.removeAttribute("aria-current");
@@ -100,12 +99,10 @@ function setupNavigation() {
       item.classList.add("active");
       item.setAttribute("aria-current", "page");
 
-      // Update page title
       if (pageTitle) {
         pageTitle.textContent = item.textContent;
       }
 
-      // Show target view, hide others
       views.forEach(view => {
         if (view.id === targetViewId) {
           view.style.display = "block";
@@ -114,14 +111,12 @@ function setupNavigation() {
         }
       });
 
-      // close mobile sidebar
       if (sidebar && sidebar.classList.contains("open")) {
         sidebar.classList.remove("open");
       }
     });
   });
 
-  // Handle initial load based on hash
   const initialHash = window.location.hash;
   if (initialHash) {
     const targetLink = document.querySelector(`.nav-item[href="${initialHash}"]`);
