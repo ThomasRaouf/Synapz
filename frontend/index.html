@@ -17,7 +17,7 @@
       <div class="sidebar-header">
         <div class="logo">SYNAPZ</div>
         <!-- Mobile close btn -->
-        <btn class="mobile-close" id="mobile-close" aria-label="Close menu">&times;</btn>
+        <button class="mobile-close" id="mobile-close" aria-label="Close menu">&times;</button>
       </div>
       <nav class="sidebar-nav">
         <ul>
@@ -36,13 +36,13 @@
       <header class="topbar">
         <div class="topbar-left">
           <!-- Mobile menu toggle -->
-          <btn class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
-          </btn>
+          </button>
           <h1 class="page-title">Dashboard</h1>
         </div>
         <div class="profile-area">
@@ -61,9 +61,9 @@
               <h2>Welcome back, Alex 👋</h2>
               <p>Ready to keep learning? Pick up where you left off or add new study material.</p>
             </div>
-            <btn id="upload-material-btn" class="btn-primary">
+            <button id="upload-material-btn" class="btn-primary">
               + Upload Material
-            </btn>
+            </button>
           </section>
           
           <!-- Upload Toast / Message (hidden by default) -->
@@ -126,8 +126,8 @@
 
               <!-- Controls -->
               <div class="flashcard-controls">
-                <btn id="prev-card-btn" class="btn-nav" disabled>&larr; Previous</btn>
-                <btn id="next-card-btn" class="btn-nav">Next &rarr;</btn>
+                <button id="prev-card-btn" class="btn-nav" disabled>&larr; Previous</button>
+                <button id="next-card-btn" class="btn-nav">Next &rarr;</button>
               </div>
             </div>
           </section>
@@ -150,7 +150,7 @@
   <div class="modal-content" role ="dialog" aria-labelledby="modal-title">
     <div class="modal-header">
       <h3 id="modal-title">Add Study Material</h3>
-      <btn id="close-modal-btn" class="close-btn" aria-label="Close modal">&times;</btn>
+      <button id="close-modal-btn" class="close-btn" aria-label="Close modal">&times;</button>
     </div>
     <div class="modal-body">
       <div id="drop-zone" class="drop-zone">
@@ -173,11 +173,11 @@
             </svg>
             <span id="selected-file-name" class="file-name">filename.pdf</span>
           </div>
-          <btn id="remove-file-btn" class="remove-btn" aria-label="Remove file">&times;</btn>
+          <button id="remove-file-btn" class="remove-btn" aria-label="Remove file">&times;</button>
         </div>
       </div>
       <div class="divider">
-        <span>QR</span>
+        <span>OR</span>
       </div>
       <div class="text-input-area">
         <textarea id="notes-input" placeholder="Paste your notes here..." rows="4"></textarea>
@@ -187,10 +187,10 @@
       Please provide a file or paste your notes.
     </div>
     <div class="modal-footer">
-      <btn id="submit-material-btn" class="btn-primary w-full submit-btn">
+      <button id="submit-material-btn" class="btn-primary w-full submit-btn">
         <span class="btn-text">Process Material</span>
         <span class="btn-loader hidden"></span>
-      </btn>
+      </button>
     </div>
   </div>
 </div>

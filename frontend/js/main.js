@@ -201,7 +201,7 @@ function setupUploadModal() {
   if (modal) {
     modal.addEventListener("click", (e) => {
       if (e.target === modal) {
-        closeModal;
+        closeModal();
       }
     });
   }
