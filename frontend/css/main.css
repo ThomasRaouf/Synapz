@@ -411,6 +411,10 @@ body {
   transform-style: preserve-3d;
 }
 
+.flashcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+
 .flashcard-face{
   position: absolute;
   width: 100%;
