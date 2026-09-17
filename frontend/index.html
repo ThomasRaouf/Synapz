@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/quizzz.css" />
 </head>
 <body>
   <div class="app-layout">
@@ -133,14 +134,69 @@
           </section>
         </div>
 
-        <!-- Quizzes  View -->
         <div id="view-quizzes" class="view-section" style="display: none;">
-          <section class="welcome-section">
-            <div class="welcome-text">
-              <h2>Quizzes</h2>
-              <p>Quiz generation and practice will be available here in a future update.</p>
+          <div class="quiz-container">
+            <div id="quiz-selection" class="quiz-selection-screen">
+              <section class="welcome-section" style="margin-bottom: 24px;">
+                <div class="welcome-text">
+                  <h2>Available Quizzes</h2>
+                  <p>Select a topic to test your knowledge.</p>
+                </div>
+              </section>
+              <div class="quiz-selection-card" id="start-quiz-btn">
+                <div class="quiz-info">
+                  <h3>Biochemistry Quiz</h3>
+                  <p>10 Questions &bull; ATP, Enzymes, and Cellular Energy</p>
+                </div>
+                <button class="btn-primary">Start Quiz</button>
+              </div>
             </div>
-          </section>
+
+            <div id="active-quiz" class="active-quiz-screen" style="display: none;">
+              <div class="quiz-header">
+                <div class="quiz-title-area">
+                  <span class="quiz-title">Biochemistry Quiz</span>
+                  <span id="quiz-progress-text" class="quiz-progress-text">Question 1 of 10</span>
+                </div>
+                <div class="quiz-progress-bar-bg">
+                  <div id="quiz-progress-bar-fill" class="quiz-progress-bar-fill"></div>
+                </div>
+              </div>
+              <h3 id="question-text" class="question-text">Question goes here?</h3>
+              <div id="options-list" class="options-list">
+                <!-- options will be injected by quiz.js here (hopefully ofc) -->
+              </div>
+              <div id="quiz-feedback" class="feedback-section" style="display: none;">
+                <div id="feedback-title" class="feedback-title">Correct</div>
+                <div id="feedback-text" class="feedback-text">Explaination here</div>
+              </div>
+              <div class="quiz-section-area">
+                <button id="quiz-submit-btn" class="btn-primary" disabled>Submit Answer</button>
+                <button id="quiz-next-btn" class="btn-primary" style="display: none;">Next Question</button>
+              </div>
+            </div>
+            <div id="quiz-results" class="quiz-results-screen" style="display: none;">
+              <div class="results-header">
+                <h2>Quiz Complete 👏</h2>
+                <p>Great job! Here's how you did:</p>
+              </div>
+              <div class="results-score-circle">
+                <span id="score-number" class="score-number">8 /10</span>
+                <span id="score-percentage" class="score-percentage">80%</span>
+              </div>
+              <div class="results-stats">
+                <div class="stat-item stat-correct">
+                  <span class="stat-label">Correct 👌</span>
+                  <span id="stat-correct-val" class="stat-value">8</span>
+                </div>
+                <div class="stat-item stat-incorrect">
+                  <span class="stat-label">Incorrect 😢</span>
+                  <span id="stat-incorrect-val" class="stat-value">2</span>
+                </div>
+              </div>
+              <button id="quiz-try-again-btn" class="btn-primary">Try Again</button>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -196,5 +252,6 @@
 </div>
 
   <script src="js/main.js"></script>
+  <script src="js/quiz.js"></script>
 </body>
 </html>
