@@ -1,0 +1,179 @@
+/* Base settings */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* General layout */
+.mindmap-layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.mindmap-canvas {
+    flex: 1;
+    overflow: auto;
+    padding: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Sidebar styling */
+.mindmap-sidebar {
+    width: 320px;
+    background: var(--sidebar-bg);
+    border-left: 1px solid #e0e0e0;
+    padding: 30px 20px;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.03);
+}
+
+.explanation-box {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: var(--card-bg); 
+    border-radius: 10px;
+    border: 1px solid var(--border-color); 
+}
+
+.explanation-box h4{
+    color: var(--text-main);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.explanation-box p {
+    color: var(--text-main);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+/* Tree layout */
+.tree ul {
+    padding-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    transition: all 0.5s;
+}
+
+.tree li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 10px 0 10px;
+    transition: all 0.5s;
+}
+
+/* Horizontal and vertical line connections */
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    border-top: 2px solid var(--border-color);
+    width: 50%;
+    height: 20px;
+}
+.tree li::after {
+    right: auto;
+    left: 50%;
+    border-left: 2p solid var(--border-color);
+}
+
+/* Remove lines from outer nodes */
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+.tree li:only-child {
+    padding-top: 0;
+}
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}
+.tree li:last-child::before {
+    border-right: 2px solid var(--border-color);
+    border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+/* Download line from parent to cjild */
+.tree ul ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    border-left: 2px solid var(--border-color);
+    width: 0;
+    height: 20px;
+    transform: translateX(-50%);
+}
+
+/* Node styling */
+.mindmap-node {
+    border: 2px solid var(--primary-color);
+    padding: 12px 24px;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-block;
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mindmap-node:hover {
+    background-color: var(--status-ready-bg);
+}
+
+.mindmap-node.selected {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+}
+
+.mindmap-node.collapsed::after {
+    content: '+';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-bg);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 15;
+}
+
+.mindmap-node.selected.collapsed::after {
+    color: var(--primary-color);
+    background-color: var(--card-bg);
+    border-color: var(--card-bg);
+}
+
+.hidden {
+    display: none !important;
+}
