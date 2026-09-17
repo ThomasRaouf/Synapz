@@ -329,10 +329,94 @@ function setupUploadModal() {
 
 }
 
+// Flashcards Interactions
+function setupFlashcards() {
+  const flashcardsData = [
+    {question: "What is Newton's 2nd law?", answer: "F = ma (Force = mass x acceleration)"},
+    {question: "What is the power house of the cell?", answer: "Mitochondria"},
+    {question: "What is the formula of photosynthesis?", answer: "6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂"},
+    {question: "What is the speed of light in vacuum?", answer: "299,792,458 m/s (≈ 3 x 10⁸ m/s"},
+    {question: "What does DNA stand for?", answer: "Deoxyribonucleic Acid"}
+  ];
+
+  let currentCardIndex = 0;
+
+  const cardWrapper = document.getElementById("flashcard-wrapper");
+  const cardInner = document.getElementById("flashcard-inner");
+  const questionEl = document.getElementById("card-text");
+  const answerEl = document.getElementById("card-answer");
+  const counterEl = document.getElementById("card-counter");
+  const prevBtn = document.getElementById("prev-card-btn");
+  const nextBtn = document.getElementById("next-card-btn");
+  const revealBtn = document.getElementById("btn-reveal");
+  const dotsContainer = document.getElementById("progress-dots");
+
+  if (!cardInner) return;
+
+  function renderCard() {
+    cardInner.classList.remove("flipped");
+    const current = flashcardsData[currentCardIndex];
+
+    if(questionEl) questionEl.textContent = current.question;
+    if (answerEl) answerEl.textContent = current.answer;
+    if (counterEl) counterEl.textContent = `card ${currentCardIndex + 1} of ${flashcardsData.length}`;
+
+    if (prevBtn) prevBtn.disabled = currentCardIndex === 0;
+    if (nextBtn) nextBtn.disabled = currentCardIndex === flashcardsData.length - 1;
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = "";
+      flashcardsData.forEach((_, idx) => {
+        const dot = document.createElement("div");
+        dot.className = `dot ${idx === currentCardIndex ? "active" : ""}`;
+        dotsContainer.appendChild(dot);
+      });
+    }
+  }
+
+  // Flip action
+  if (revealBtn) {
+    revealBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      cardInner.classList.toggle("flipped");
+    });
+  }
+
+  if (cardWrapper) {
+    cardWrapper.addEventListener("click", () => {
+      cardInner.classList.toggle("flipped");
+    });
+  }
+
+  // Cards navigation actions
+  if (nextBtn) {
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (currentCardIndex < flashcardsData.length - 1) {
+        currentCardIndex++;
+        renderCard();
+      }
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        renderCard();
+      }
+    });
+  }
+
+  renderCard(;)
+}
+
 // Initialize Dashboard when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
   renderMaterials();
   setupInteractions();
   setupUploadModal();
+  setupFlashcards();
 });
