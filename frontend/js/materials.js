@@ -141,3 +141,89 @@ function filterMaterials() {
 
     updateLibraryView();
 }
+
+function updateLibraryView() {
+    const grid = document.getElementById("library-materials-grid");
+    const emptyState = document.getElementById("material-empty-state");
+
+    if (!grid || !emptyState) return;
+
+    if (filteredMaterials.length === 0) {
+        grid.style.display = "none";
+        emptyState.classList.remove("hidden");
+    } else {
+        emptyState.classList.add("hidden");
+        grid.style.display = "grid"; // from css
+        renderCardsToGrid(grid, filteredMaterials);
+    }
+}
+
+function clearFilters() {
+    document.getElementById("material-search").value = "";
+    document.getElementById("material-type-filter").value = "All";
+    document.getElementById("material-status-filter").value = "All";
+    document.getElementById("material-sort").value = "newest";
+    filterMaterials();
+}
+
+// Modal handling
+function openMaterialDetail(id) {
+    const material = materialsData.find(m => m.id === id);
+    if (!material) return;
+
+    const modal = document.getElementById("material-detail-modal");
+    document.getElementById("material-detail-title").textContent = material.title;
+    document.getElementById("material-detail-subject").textContent = material.subject;
+    document.getElementById("material-detail-type").textContent = material.type;
+    document.getElementById("material-detail-status").textContent = material.status;
+    document.getElementById("material-detail-date").textContent = material.date;
+    
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+}
+
+function closeMaterialDetail() {
+    const modal = document.getElementById("material-detail-modal");
+    if (modal) {
+        modal.classList.add("hidden");
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+// Initialize Materials features
+function initMaterials() {
+    // Render initial items
+    renderDashboardMaterials();
+    filterMaterials(); //library grid
+
+    // Attach event listeners
+    const searchInput = document.getElementById("material-search");
+    const typeFilter = document.getElementById("material-type-filter");
+    const statusFilter = document.getElementById("material-status-filter");
+    const sortSelect = document.getElementById("material-sort");
+    const clearBtn = document.getElementById("clear-filters-btn");
+    const emptyClearBtn = document.getElementById("empty-clear-btn");
+
+    if (searchInput) searchInput.addEventListener("input", filterMaterials);
+    if (typeFilter) typeFilter.addEventListener("change", filterMaterials);
+    if (statusFilter) statusFilter.addEventListener("change", filterMaterials);
+    if (sortSelect) sortSelect.addEventListener("change", filterMaterials);
+    if (clearBtn) clearBtn.addEventListener("click", clearFilters);
+    if (emptyClearBtn) emptyClearBtn.addEventListener("click", clearFilters);
+
+    // Modal close buttons
+    const modalCloseBtn = document.getElementById("close-material-detail-btn");
+    const modalCloseAction = document.getElementById("close-material-detail-action");
+    const modalOverlay = document.getElementById("material-detail-modal");
+
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeMaterialDetail);
+    if (modalCloseAction) modalCloseAction.addEventListener("click", closeMaterialDetail);
+    if (modalOverlay) {
+        modalOverlay.addEventListener("click", (e) => {
+            if (e.target === modalOverlay) {
+                closeMaterialDetail();
+            }
+        });
+    }
+}
+document.addEventListener("DOMContentLoaded", initMaterials);
