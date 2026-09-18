@@ -107,4 +107,76 @@ function selectOption(index, btnElement) {
     if (isAnswerSubmitted) return;
     selectedOptionIndex = index;
     const options = document.querySelectorAll(".option-btn");
+    options.forEach(opt => opt.classList.remove("selected"));
+    btnElement.classList.add("selected");
+    document.getElementById("quiz-submit-btn").disabled = false;
+
 }
+
+function submitAnswer() {
+    if (selectedOptionIndex === null || isAnswerSubmitted) return;
+    isAnswerSubmitted = true;
+    const question = quizQuestions[currentQuestionIndex];
+    const selectedOptionText = question.options[selectedOptionIndex];
+    const isCorrect = selectedOptionText === question.correctAnswer;
+    if (isCorrect) {
+        score++;
+    }
+    const options = document.querySelectorAll(".option-btn");
+    options.forEach((opt, index) => {
+        opt.disabled = true;
+        const optText = question.options[idx];
+        if (optText = question.correctAnswer) {
+            opt.classList.add("Correct");
+        } else if (idx === selectedOptionIndex && !isCorrect) {
+            opt.classList.add("Incorrect");
+        }
+    });
+
+    const feedbackEl = document.getElementById("quiz-feedback");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackText = document.getElementById("feedback-text");
+
+    feedbackEl.style.display = "block";
+    feedbackEl.className = "feedback-section " + (isCorrect ? "correct-feedback" : "incorrect-feedback");
+
+    if (isCorrect) {
+        feedbackTitle.innerHTML = `Correct 👌`;
+        feedbackText.innerHTML = `<p>${question.explanation}</p>`;
+    } else {
+        feedbackTitle.innerHTML = `Incorrect 😢`;
+        feedbackText.innerHTML = `
+            <div class="feedback-correct-answer">Correct answer: ${question.correctAnswer}</div>
+            <p>${question.explanation}</p>
+        `;
+    }
+
+    document.getElementById("quiz-submit-btn".style.display = "none");
+    document.getElementById("quiz-next-btn").style.display = "inline-block";
+
+}
+
+function nextQuestion () {
+    if (currentQuestionIndex < quizQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    document.getElementById("active-quiz").style.display = "none";
+    const resultsScreen = document.getElementById("quiz-results");
+    resultsScreen.style.display = "block";
+    const percentage = Math.round((score/quizQuestions.length)*100);
+    document.getElementById("score-number").textContent = `${score}/${quizQuestions.length}`;
+    document.getElementById("score-percentage").textContent = `${percentage}%`;
+    document.getElementById("stat-correct-val").textContent = score;
+    document.getElementById("stat-incorrect-val").textContent = quizQuestions.length - score;
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initQuiz();
+});
