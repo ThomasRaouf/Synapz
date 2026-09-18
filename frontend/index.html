@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/quizzz.css" />
+  <link rel="stylesheet" href="css/materials.css">
 </head>
 <body>
   <div class="app-layout">
@@ -89,10 +90,46 @@
               <p>View and manage all your study materials.</p>
           </div>
         </section>
+
+        <!-- Materials Toolbar-->
+        <div class="materials-toolbar">
+          <div class="search-bar">
+            <input type="text" id="material-search" placeholder="Search materials..." />
+          </div>
+          <div class="filter-controls">
+            <select id="material-type-filter">
+              <option value="All">All Types</option>
+              <option value="PDF">PDF</option>
+              <option value="Word Doc">Word</option>
+              <option value="Image">Image</option>
+              <option value="Text">Text</option>
+            </select>
+            <select id="material-status-filter">
+              <option value="All">All Status</option>
+              <option value="New">New</option>
+              <option value="Ready">Ready</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <select id="material-sort">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
+            </select>
+            <button id="clear-filters-btn" class="btn-clear">Clear Filters</button>
+          </div>
+        </div>
+
         <section class="recent-materials-section">
-          <div class="materials-grid">
-            <!-- Cards will be injected by main.js -->
-            </div>
+          <div id="material-empty-state" class="empty-state hidden">
+            <p>No materials found</p>
+            <p class="text-muted">Try a different search or clear your filters</p>
+            <button id="empty-clear-btn" class="btn-primary" style="margin-top:16px;">Clear Filters</button>
+          </div>
+          <div class="materials-grid" id="library-materials-grid">
+            <!-- Cards will be injected by materials.js -->
+          </div>
         </section>
       </div>
 
@@ -250,7 +287,30 @@
     </div>
   </div>
 </div>
-
+<!-- Material Detail Modal-->
+<div id="material-detail-modal" class="modal-overlay hidden" aria-hidden="true">
+  <div class="modal-content" role="dialog" aria-labelledby="material-detail-title">
+    <div class="modal-header">
+      <h3 id="material-detail-title">Material Title</h3>
+      <button id="close-material-detail-btn" class="close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="material-detail-meta">
+        <p><strong>Subject:</strong> <span id="material-detail-subject"></span></p>
+        <p><strong>Type:</strong> <span id="material-detail-type"></span> </p>
+        <p><strong>Status:</strong> <span id="material-detail-status"></span></p>
+        <p><strong>Added:</strong> <span id="material-detail-date"></span></p>
+      </div>
+      <div class="material-detail-placeholder-text">
+        <p>This is a demo material. The full material workspace will be connected in a future feature</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="close-material-detail-action" class="btn-primary w-full">Close</button>
+    </div>
+  </div>
+</div>
+  <script src="js/materials.js"></script>
   <script src="js/main.js"></script>
   <script src="js/quiz.js"></script>
 </body>
