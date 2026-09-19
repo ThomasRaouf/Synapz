@@ -1,14 +1,27 @@
 name: Deploy to FastAPI Cloud
+
 on:
   push:
     branches: [main]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - uses: actions/checkout@v5
+
       - uses: astral-sh/setup-uv@v7
-      - run: uv run fastapi deploy
+
+      - run: uv pip install --system -r requirements.txt
+
+      - run: uv pip install --system "fastapi[standard]"
+
+      - run: fastapi deploy
         env:
           FASTAPI_CLOUD_TOKEN: ${{ secrets.FASTAPI_CLOUD_TOKEN }}
           FASTAPI_CLOUD_APP_ID: ${{ secrets.FASTAPI_CLOUD_APP_ID }}
