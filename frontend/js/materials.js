@@ -1,46 +1,13 @@
 // materials.js
 
-// Demo Data for Recent Materials (with timestamps)
-const materialsData = [
-    {
-        id: 1,
-        subject: "Anatomy",
-        title: "Upper Limb Anatomy Notes & Diagrams",
-        type: "PDF",
-        status: "Completed",
-        date: "Added 2 days ago",
-        addedAt: new Date(Date.now() - 2 * 86400000).getTime()
-    },
-    {
-        id: 2,
-        subject: "Physics",
-        title: "Electromagnetism Formulas & Concepts",
-        type: "Word Doc",
-        status: "In Progress",
-        date: "Added 3 days ago",
-        addedAt: new Date(Date.now() - 3 * 86400000).getTime()
-    },
-    {
-        id: 3,
-        subject: "Biochemistry",
-        title: "Metabolic Pathways & Citric Acid Cycle",
-        type: "Image",
-        status: "Ready",
-        date: "Added 1 week ago",
-        addedAt: new Date(Date.now() - 7 * 86400000).getTime()
-    },
-    {
-        id: 4,
-        subject: "Calculus",
-        title: "Derivatives Practice Problems",
-        type: "Text",
-        status: "New",
-        date: "Added just now",
-        addedAt: Date.now()
-    }
-];
+let materialsData = [];
+let filteredMaterials = [];
 
-let filteredMaterials = [...materialsData];
+function loadMaterialsFromStore() {
+    materialsData = getMaterials();
+    filteredMaterials = [...materialsData];
+}
+
 
 function getStatusClass(status) {
     switch(status.toLowerCase()) {
@@ -190,8 +157,16 @@ function closeMaterialDetail() {
     }
 }
 
+//Refresh materials after upload
+function refreshMaterials() {
+    loadMaterialsFromStore();
+    renderDashboardMaterials();
+    filterMaterials(); //re-apply existing filters
+}
+
 // Initialize Materials features
 function initMaterials() {
+    loadMaterialsFromStore();
     // Render initial items
     renderDashboardMaterials();
     filterMaterials(); //library grid
@@ -226,4 +201,3 @@ function initMaterials() {
         });
     }
 }
-document.addEventListener("DOMContentLoaded", initMaterials);
