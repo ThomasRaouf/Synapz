@@ -1,21 +1,23 @@
 """
 Synapz backend - main entry point.
 
-This is the foundation-only version of the backend.
-It only proves that the server runs and that the frontend can talk to it.
+This is the foundation of the backend.
 
-No authentication, database, or AI logic lives here yet.
-Those will be added later inside routes/, services/, models/, and utils/.
+Authentication, database, and AI logic will be added later.
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Synapz Backend", version="0.1.0")
+from routes.materials import router as materials_router
 
-# Allow the frontend (served from a different local port) to call this API
-# during development. This is intentionally permissive for now because we
-# are only running on localhost. It should be tightened later.
+
+app = FastAPI(
+    title="Synapz Backend",
+    version="0.1.0",
+)
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,6 +25,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(materials_router)
 
 
 @app.get("/")
@@ -33,5 +38,5 @@ def read_root():
 
 @app.get("/api/health")
 def health_check():
-    """Health check endpoint used by the frontend test button."""
+    """Health check endpoint used by the frontend."""
     return {"status": "ok"}
