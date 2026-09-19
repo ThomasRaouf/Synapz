@@ -218,6 +218,19 @@ function setupUploadModal() {
     submitBtn.querySelector(".btn-loader").classList.add("hidden");
   }
 
+  function getFileType(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'PDF';
+    if (['doc', 'docx'].includes(ext)) return 'Word Doc';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'Image';
+    return 'Text';
+  }
+
+  function getNotesTitle(notes) {
+    const lines = notes.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    return lines.length > 0 ? lines[0] : 'Untitled Notes';
+  }
+
   submitBtn.addEventListener("click", () => {
     const hasFile = selectedFile !== null;
     const hasNotes = notesInput.value.trim().length > 0;
@@ -231,25 +244,47 @@ function setupUploadModal() {
     submitBtn.querySelector(".btn-text").textContent = "Processing...";
     submitBtn.querySelector(".btn-loader").classList.remove("hidden");
 
-    setTimeout (() => {
-      closeModal();
-      const uploadMessage = document.getElementById("upload-message");
-      if (uploadMessage) {
-        uploadMessage.innerHTML = "<p><strong>Success!</strong> Material uploaded successfully.</p>";
-        uploadMessage.classList.remove("hidden");
-        setTimeout (() => {
-          uploadMessage.classList.add("hidden");
-          setTimeout(() => {
-            uploadMessage.innerHTML = "<p><strong>Demo Mode:</strong> Actual file uploading will be implemented in the future.</p>";
-          }, 300);
-        }, 4000);
-      }
-      
-    }, 1500);
+    let materialTitle = "";
+    let materialType = "Text";
+    let materialSource = "notes";
 
+    if (hasFile) {
+      materialTitle = selectedFile.name;
+      materialType = getFileType(selectedFile.name);
+      materialSource = "file";
+    } else {
+      materialTitle = getNotesTitle(notesInput.value);
+      materialType = "Text";
+      materialSource = "notes";
+    }
+    
+    const newMaterial = {
+      id: Date.now(),
+      subject: "General", //default
+      title:materialTitle,
+      type:materialType,
+      status: "New",
+      date: "Added just now",
+      addedAt: Date.now(),
+      source: materialSource
+    };
+
+    addMaterial(newMaterial);
+    refreshMaterials();
+
+    closeModal();
+    const uploadMessage = document.getElementById("upload-message");
+    if (uploadMessage) {
+      uploadMessage.innerHTML = "<p><strong>Success!</strong> Material uploaded successfully.</p>";
+      uploadMessage.classList.remove("hidden");
+      setTimeout (() => {
+        uploadMessage.classList.add("hidden");
+        setTimeout(() => {
+          uploadMessage.innerHTML = "<p><strong>Demo Mode:</strong> Actual file uploading will be implemented in the future.</p>";
+        }, 300);
+      }, 4000);
+    }    
   });
-
-
 }
 
 // Flashcards Interactions
@@ -338,7 +373,7 @@ function setupFlashcards() {
 // Initialize Dashboard when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
-  renderMaterials();
+  initMaterials();
   setupInteractions();
   setupUploadModal();
   setupFlashcards();
