@@ -60,37 +60,22 @@ function setupInteractions() {
   const sidebar = document.getElementById("sidebar");
   const mobileMenuBtn = document.getElementById("mobile-menu-btn");
   const mobileCloseBtn = document.getElementById("mobile-close");
-  
+
   if (mobileMenuBtn && sidebar) {
     mobileMenuBtn.addEventListener("click", () => {
       sidebar.classList.add("open");
     });
   }
-  
+
   if (mobileCloseBtn && sidebar) {
     mobileCloseBtn.addEventListener("click", () => {
       sidebar.classList.remove("open");
     });
   }
-  
+
   // Upload btn is now handled by setupUploadModal
 }
 
-// Preserve existing backend call pattern for future reference
-// The backend runs on a different port than the frontend during local
-// development, so we call it directly using its full address.
-
-const BACKEND_URL = "http://127.0.0.1:8000";
-
-async function callBackend(path) {
-  const response = await fetch(BACKEND_URL + path);
-
-  if (!response.ok) {
-    throw new Error("Backend request failed with status " + response.status);
-  }
-
-  return response.json();
-}
 
 function setupUploadModal() {
   const uploadBtn = document.getElementById("upload-material-btn");
@@ -114,7 +99,7 @@ function setupUploadModal() {
       modal.setAttribute("aria-hidden", "false");
     });
   }
-  
+
   const closeModal = () => {
     if (!modal) return;
     modal.classList.add("hidden");
@@ -169,7 +154,7 @@ function setupUploadModal() {
     }
   });
 
-  fileInput.addEventListener("change", function() {
+  fileInput.addEventListener("change", function () {
     handleFiles(this.files);
   });
 
@@ -231,11 +216,12 @@ function setupUploadModal() {
     return lines.length > 0 ? lines[0] : 'Untitled Notes';
   }
 
-  submitBtn.addEventListener("click", () => {
+  submitBtn.addEventListener("click", async () => {
     const hasFile = selectedFile !== null;
     const hasNotes = notesInput.value.trim().length > 0;
 
     if (!hasFile && !hasNotes) {
+      validationMessage.textContent = "Please provide a file or paste your notes.";
       validationMessage.classList.remove("hidden");
       return;
     }
@@ -244,57 +230,71 @@ function setupUploadModal() {
     submitBtn.querySelector(".btn-text").textContent = "Processing...";
     submitBtn.querySelector(".btn-loader").classList.remove("hidden");
 
-    let materialTitle = "";
-    let materialType = "Text";
-    let materialSource = "notes";
-
-    if (hasFile) {
-      materialTitle = selectedFile.name;
-      materialType = getFileType(selectedFile.name);
-      materialSource = "file";
-    } else {
-      materialTitle = getNotesTitle(notesInput.value);
-      materialType = "Text";
-      materialSource = "notes";
-    }
-    
-    const newMaterial = {
-      id: Date.now(),
-      subject: "General", //default
-      title:materialTitle,
-      type:materialType,
-      status: "New",
-      date: "Added just now",
-      addedAt: Date.now(),
-      source: materialSource
-    };
-
-    addMaterial(newMaterial);
-    refreshMaterials();
-
-    closeModal();
     const uploadMessage = document.getElementById("upload-message");
     if (uploadMessage) {
-      uploadMessage.innerHTML = "<p><strong>Success!</strong> Material uploaded successfully.</p>";
-      uploadMessage.classList.remove("hidden");
-      setTimeout (() => {
-        uploadMessage.classList.add("hidden");
+      uploadMessage.classList.add("hidden");
+    }
+
+    const formData = new FormData();
+
+    if (hasFile) {
+      formData.append("file, selectedFile");
+    } else {
+      formData.append("title", getNotesTitle(notesInput.value));
+      formData.append("type", "TEXT");
+      formData.append("content", notesInput.value);
+    }
+
+    try {
+
+      const responseData = await uploadMaterialRequest(formData);
+      const newMaterial = {
+        id: Date.now(),
+        subject: "General",
+        title: responseData.material.title,
+        type: responseData.material.type === 'TEXT' ? 'Text' : (responseData.material.type || 'Text'),
+        status: responseData.material.status === 'recieved' ? 'New' : 'New',
+        date: "Added just now",
+        addedAt: Date.now(),
+        source: hasFile ? "file" : "notes"
+      };
+
+      addMaterial(newMaterial);
+      refreshMaterials();
+      closeModal();
+
+      if (uploadMessage) {
+        uploadMessage.innerHTML = "<p><strong>Success!</strong> Material recieved successfully.</p>";
+        uploadMessage.classList.remove("hidden");
         setTimeout(() => {
-          uploadMessage.innerHTML = "<p><strong>Demo Mode:</strong> Actual file uploading will be implemented in the future.</p>";
-        }, 300);
-      }, 4000);
-    }    
+          uploadMessage.classList.add("hidden");
+        }, 4000);
+      }
+
+    }
+
+    catch (error) {
+      validationMessage.textContent = error.message || "We could't process this material, please try again.";
+      validationMessage.classList.remove("hidden");
+    }
+    finally {
+      submitBtn.disabled = false;
+      submitBtn.querySelector(".btn-text").textContent = "Process Material";
+      submitBtn.querySelector(".btn-loader").classList.add("hidden");
+    }
+
+        
   });
 }
 
 // Flashcards Interactions
 function setupFlashcards() {
   const flashcardsData = [
-    {question: "What is Newton's 2nd law?", answer: "F = ma (Force = mass x acceleration)"},
-    {question: "What is the power house of the cell?", answer: "Mitochondria"},
-    {question: "What is the formula of photosynthesis?", answer: "6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂"},
-    {question: "What is the speed of light in vacuum?", answer: "299,792,458 m/s (≈ 3 x 10⁸ m/s"},
-    {question: "What does DNA stand for?", answer: "Deoxyribonucleic Acid"}
+    { question: "What is Newton's 2nd law?", answer: "F = ma (Force = mass x acceleration)" },
+    { question: "What is the power house of the cell?", answer: "Mitochondria" },
+    { question: "What is the formula of photosynthesis?", answer: "6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂" },
+    { question: "What is the speed of light in vacuum?", answer: "299,792,458 m/s (≈ 3 x 10⁸ m/s" },
+    { question: "What does DNA stand for?", answer: "Deoxyribonucleic Acid" }
   ];
 
   let currentCardIndex = 0;
@@ -315,7 +315,7 @@ function setupFlashcards() {
     cardInner.classList.remove("flipped");
     const current = flashcardsData[currentCardIndex];
 
-    if(questionEl) questionEl.textContent = current.question;
+    if (questionEl) questionEl.textContent = current.question;
     if (answerEl) answerEl.textContent = current.answer;
     if (counterEl) counterEl.textContent = `card ${currentCardIndex + 1} of ${flashcardsData.length}`;
 
