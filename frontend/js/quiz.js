@@ -42,7 +42,7 @@ function initQuiz() {
     const quizResults = document.getElementById("quiz-results");
     const startBtn = document.getElementById("start-quiz-btn");
     const submitBtn = document.getElementById("quiz-submit-btn");
-    const nextBtn = document.getElementById("quiz-next-Btn");
+    const nextBtn = document.getElementById("quiz-next-btn");
     const tryAgainBtn = document.getElementById("quiz-try-again-btn");
 
     if (startBtn) {
@@ -75,7 +75,7 @@ function startNewQuiz() {
 function renderQuestion() {
     isAnswerSubmitted = false;
     selectedOptionIndex = null;
-    const question - quizQuestions[currentQuestionIndex];
+    const question = quizQuestions[currentQuestionIndex];
     document.getElementById("quiz-progress-text").textContent = `Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
     const progressPercent = ((currentQuestionIndex)/quizQuestions.length)*100;
     document.getElementById("quiz-progress-bar-fill").style.width = `${progressPercent}%`;
@@ -125,11 +125,11 @@ function submitAnswer() {
     const options = document.querySelectorAll(".option-btn");
     options.forEach((opt, index) => {
         opt.disabled = true;
-        const optText = question.options[idx];
-        if (optText = question.correctAnswer) {
-            opt.classList.add("Correct");
-        } else if (idx === selectedOptionIndex && !isCorrect) {
-            opt.classList.add("Incorrect");
+        const optText = question.options[index];
+        if (optText === question.correctAnswer) {
+            opt.classList.add("correct");
+        } else if (index === selectedOptionIndex && !isCorrect) {
+            opt.classList.add("incorrect");
         }
     });
 
@@ -151,7 +151,7 @@ function submitAnswer() {
         `;
     }
 
-    document.getElementById("quiz-submit-btn".style.display = "none");
+    document.getElementById("quiz-submit-btn").style.display = "none";
     document.getElementById("quiz-next-btn").style.display = "inline-block";
 
 }

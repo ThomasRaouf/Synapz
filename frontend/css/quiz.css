@@ -238,7 +238,7 @@
 }
 
 .feedback-title {
-    font-size: 10px;
+    font-size: 18px;
     font-weight: 700;
     margin-bottom: 12px;
     display: flex;
@@ -252,7 +252,7 @@
 
 }
 
-.incorrect-feecback .feedback title {
+.incorrect-feedback .feedback-title {
     color: #991b1b;
 
 }
