@@ -105,32 +105,6 @@
 }
 
 
-.material-detail-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background-color: #f8fafc;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color)
-}
-
-.material-detail-meta p {
-    font-size: 14px;
-    color: var(--text-main);
-    margin: 0;
-}
-
-.material-detail-placeholder-text {
-    padding: 16px;
-    background-color: #eff6ff;
-    border-radius: 8px;
-    border: 1px solid #bfdbfe;
-    color: #1e3a8a;
-    font-size: 14px;
-    line-height: 1.5;
-    text-align: center;
-}
 
 @media (max-width: 768px) {
     .materials-toolbar {

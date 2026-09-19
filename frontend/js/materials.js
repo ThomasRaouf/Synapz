@@ -133,45 +133,23 @@ function clearFilters() {
     filterMaterials();
 }
 
-// Modal handling
-function openMaterialDetail(id) {
-    const material = materialsData.find(m => m.id === id);
-    if (!material) return;
+//modal handling transferred to workspace
 
-    const modal = document.getElementById("material-detail-modal");
-    document.getElementById("material-detail-title").textContent = material.title;
-    document.getElementById("material-detail-subject").textContent = material.subject;
-    document.getElementById("material-detail-type").textContent = material.type;
-    document.getElementById("material-detail-status").textContent = material.status;
-    document.getElementById("material-detail-date").textContent = material.date;
-    
-    modal.classList.remove("hidden");
-    modal.setAttribute("aria-hidden", "false");
-}
-
-function closeMaterialDetail() {
-    const modal = document.getElementById("material-detail-modal");
-    if (modal) {
-        modal.classList.add("hidden");
-        modal.setAttribute("aria-hidden", "true");
-    }
-}
-
-//Refresh materials after upload
+//refresh
 function refreshMaterials() {
     loadMaterialsFromStore();
     renderDashboardMaterials();
     filterMaterials(); //re-apply existing filters
 }
 
-// Initialize Materials features
+//init features
 function initMaterials() {
     loadMaterialsFromStore();
-    // Render initial items
+    //render
     renderDashboardMaterials();
     filterMaterials(); //library grid
 
-    // Attach event listeners
+    //attach event listeners
     const searchInput = document.getElementById("material-search");
     const typeFilter = document.getElementById("material-type-filter");
     const statusFilter = document.getElementById("material-status-filter");
@@ -185,19 +163,4 @@ function initMaterials() {
     if (sortSelect) sortSelect.addEventListener("change", filterMaterials);
     if (clearBtn) clearBtn.addEventListener("click", clearFilters);
     if (emptyClearBtn) emptyClearBtn.addEventListener("click", clearFilters);
-
-    // Modal close buttons
-    const modalCloseBtn = document.getElementById("close-material-detail-btn");
-    const modalCloseAction = document.getElementById("close-material-detail-action");
-    const modalOverlay = document.getElementById("material-detail-modal");
-
-    if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeMaterialDetail);
-    if (modalCloseAction) modalCloseAction.addEventListener("click", closeMaterialDetail);
-    if (modalOverlay) {
-        modalOverlay.addEventListener("click", (e) => {
-            if (e.target === modalOverlay) {
-                closeMaterialDetail();
-            }
-        });
-    }
 }
