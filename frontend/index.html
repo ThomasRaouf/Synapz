@@ -301,15 +301,49 @@
         <h3 id="material-detail-title">Material Title</h3>
         <button id="close-material-detail-btn" class="close-btn" aria-label="Close modal">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="material-detail-meta">
-          <p><strong>Subject:</strong> <span id="material-detail-subject"></span></p>
-          <p><strong>Type:</strong> <span id="material-detail-type"></span> </p>
-          <p><strong>Status:</strong> <span id="material-detail-status"></span></p>
-          <p><strong>Added:</strong> <span id="material-detail-date"></span></p>
+      <div class="modal-body workspace-modal-body">
+        <div class="workspace-meta">
+          <div class="meta-item"><span class="meta-label">Subject:</span> <span id="material-detail-subject"></span>
+          </div>
+          <div class="meta-item"><span class="meta-label">Type:</span> <span id="material-detail-type"></span></div>
+          <div class="meta-item"><span class="meta-label">Status:</span> <span id="material-detail-status"></span></div>
+          <div class="meta-item"><span class="meta-label">Added:</span> <span id="material-detail-date"></span></div>
         </div>
-        <div class="material-detail-placeholder-text">
-          <p>This is a demo material. The full material workspace will be connected in a future feature</p>
+        <div class="workspace-resources-section">
+          <h4 class="workspace-section-title">Study Resources</h4>
+          <div class="workspace-resources-grid">
+            <div class="resource-card">
+              <div class="resource-info">
+                <h5>Summary</h5>
+                <p class="resource-state unavailable">Not generated yet</p>
+              </div>
+              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+            </div>
+            <div class="resource-card">
+              <div class="resource-info">
+                <h5>Flashcards</h5>
+                <p class="resource-state available">Demo available</p>
+              </div>
+              <button id="workspace-study-flashcards" class="btn-resource btn-primary">Study</button>
+            </div>
+            <div class="resource-card">
+              <div class="resource-info">
+                <h5>Quiz</h5>
+                <p class="resource-state unavailable">Not generated yet</p>
+              </div>
+              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+            </div>
+            <div class="resource-card">
+              <div class="resource-info">
+                <h5>Mind Map</h5>
+                <p class="resource-state unavailable">Not generated yet</p>
+              </div>
+              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+            </div>
+          </div>
+        </div>
+        <div class="workspace-original-material">
+          <p><strong>Original material:</strong> <span id="material-detail-original"></span></p>
         </div>
       </div>
       <div class="modal-footer">
