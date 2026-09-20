@@ -37,7 +37,7 @@ const mindMapData = {
 // Function to update the sidebar explanation
 function updateExplanation(title, explanation) {
     const titleEl = document.getElementById("explanation-title");
-    const descEl = document.getElementById("explanation-desc");
+    const descEl = document.getElementById("explanation-disc");
 
     if (titleEl && descEl) {
         titleEl.textContent = title;
@@ -85,17 +85,28 @@ function createNodeElement(nodeData) {
     return li;
 }
 
-// Render the three once the page loads
-document.addEventListener('DOMContentLoaded', () => {
+// Render the mindmap once the page loads
+function initMindMap() {
     const treeContainer = document.getElementById('mindmap-tree');
 
-    if (treeContainer && typeof mindMapData !== 'undefined') {
-        const rootUl = document.createElement('ul');
-        const rootLi = createNodeElement(mindMapData);
-
-        rootUl.appendChild(rootLi);
-        treeContainer.appendChild(rootUl);
-
-        updateExplanation(mindMapData.title, mindMapData.explanation);
+    if (!treeContainer || typeof mindMapData === 'undefined') {
+        return;
     }
+
+    treeContainer.innerHTML = '';
+    const rootUl = document.createElement('ul');
+    const rootLi = createNodeElement(mindMapData);
+
+    rootUl.appendChild(rootLi);
+    treeContainer.appendChild(rootUl);
+
+    updateExplanation(
+        mindMapData.title,
+        mindMapData.explanation
+    );
+
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMindMap();
 });

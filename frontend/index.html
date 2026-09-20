@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/quiz.css" />
   <link rel="stylesheet" href="css/materials.css">
   <link rel="stylesheet" href="css/material-workspace.css">
+  <link rel="stylesheet" href="css/mindmap.css">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
           <li><a href="#materials" data-view="materials" class="nav-item">Materials</a></li>
           <li><a href="#flashcards" data-view="flashcards" class="nav-item">Flashcards</a></li>
           <li><a href="#quizzes" data-view="quizzes" class="nav-item">Quizzes</a></li>
-          <li><a href="mindmap.html" class="nav-item">Mind Maps</a></li>
+          <li><a href="#mindmaps" data-view="mindmaps" class="nav-item">Mind Maps</a></li>
         </ul>
       </nav>
     </aside>
@@ -240,6 +241,45 @@
             </div>
           </div>
         </div>
+
+        <!-- Mind maps view -->
+        <div id="view-mindmaps" class="view-section" style="display: none;">
+          <section class="mindmap-section">
+
+            <div class="mindmap-header">
+              <div>
+                <h2>Mind Maps</h2>
+                <p>Explore concepts and their connections</p>
+              </div>
+            </div>
+
+            <div class="mindmap-layout">
+
+              <!-- Mind map canvas -->
+              <main class="mindmap-canvas">
+                <div class="tree" id="mindmap-tree"></div>
+              </main>
+
+              <!-- Explanation -->
+               <aside class="mindmap-sidebar">
+                <h3>Concept Details</h3>
+
+                <div class="explanation-box">
+                  <h4 id="explanation-title">Select a concept</h4>
+
+                  <p id="explanation-disc">
+                    Click on any node on the mind map to expand/collapse
+                    its branches and view its explanation here.
+                  </p>
+                </div>
+               </aside>
+
+            </div>
+
+          </section>
+        </div>
+
+
       </main>
     </div>
   </div>
@@ -355,6 +395,7 @@
   <script src="js/material-store.js"></script>
   <script src="js/materials.js"></script>
   <script src="js/material-workspace.js"></script>
+  <script src="js/mindmap.js"></script>
   <script src="js/main.js"></script>
   <script src="js/quiz.js"></script>
 </body>

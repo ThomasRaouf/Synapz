@@ -39,6 +39,10 @@ function setupNavigation() {
         }
       });
 
+      if (targetViewName === "mindmaps") {
+        initMindMap();
+      }
+
       if (sidebar && sidebar.classList.contains("open")) {
         sidebar.classList.remove("open");
       }
@@ -238,7 +242,7 @@ function setupUploadModal() {
     const formData = new FormData();
 
     if (hasFile) {
-      formData.append("file, selectedFile");
+      formData.append("file", selectedFile);
     } else {
       formData.append("title", getNotesTitle(notesInput.value));
       formData.append("type", "TEXT");
