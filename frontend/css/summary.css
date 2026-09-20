@@ -1,0 +1,155 @@
+.summary-modal-body {
+    padding: 24px;
+    background-color: var(--surface-light);
+    max-height: 70vh;
+    overflow-y:auto;
+
+}
+
+.summary-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+}
+
+.summary-section {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+}
+
+.summary-section h4 {
+    margin: 0 0 12px 0;
+    color: var(--primary);
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 8px;
+    display:flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+.summary-section p {
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+
+}
+
+.summary-list {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--text);
+
+}
+
+.summary-list li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+
+}
+
+.summary-definitions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+}
+
+.definition-item {
+    background-color: var(--surface-light);
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid var(--primary);
+
+}
+
+.definition-term {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+    display: block;
+
+}
+
+.definition-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+}
+
+.summary-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    gap: 16px;
+
+}
+
+.summary-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: summary-spin 1s linear infinite;
+
+}
+
+@keyframes summary-spin {
+    to {transform: rotate(360deg);}
+}
+
+.summary-loading-text {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 1.1rem;
+
+}
+
+.summary-loading-subtext {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+
+}
+
+.summary-error {
+    padding: 24px;
+    background-color: #fee2e2;
+    border: 1px solid #ef4444;
+    border-radius: var(--radius-md);
+    color: #b91c1c;
+    text-align: center;
+
+}
+
+.summary-error h4 {
+    margin: 0 0 8px 0;
+    color: #991b1b;
+
+}
+
+.summary-tester {
+    margin-bottom: 24px;
+
+}
+
+.summary-tester textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    font-family: inherit;
+    resize: vertical;
+    
+}
