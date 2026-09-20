@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = window.SYNAPZ_API_URL || "http://127.0.0.1:8000";
 async function apiRequest(endpoint, options = {}){
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`,options);
@@ -31,5 +31,11 @@ async function uploadMaterialRequest(formData) {
   return await apiRequest('/api/materials', {
     method: 'POST',
     body: formData,
+  });
+}
+
+async function getMaterialsRequest() {
+  return await apiRequest('/api/materials', {
+    method: 'GET',
   });
 }

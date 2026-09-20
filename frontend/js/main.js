@@ -262,19 +262,8 @@ function setupUploadModal() {
     try {
 
       const responseData = await uploadMaterialRequest(formData);
-      const newMaterial = {
-        id: Date.now(),
-        subject: "General",
-        title: responseData.material.title,
-        type: responseData.material.type === 'TEXT' ? 'Text' : (responseData.material.type || 'Text'),
-        status: responseData.material.status === 'recieved' ? 'New' : 'New',
-        date: "Added just now",
-        addedAt: Date.now(),
-        source: hasFile ? "file" : "notes"
-      };
 
-      addMaterial(newMaterial);
-      refreshMaterials();
+      await refreshMaterials();
       closeModal();
 
       if (uploadMessage) {
