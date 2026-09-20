@@ -11,13 +11,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.materials import router as materials_router
 from routes.summaries import router as summaries_router
+from routes.processing import router as processing_router
 
 
 app = FastAPI(
     title="Synapz Backend",
     version="0.1.0",
 )
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,18 +27,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 app.include_router(materials_router)
 app.include_router(summaries_router)
+app.include_router(processing_router)
 
 
 @app.get("/")
 def read_root():
-    """Simple root endpoint to confirm the backend is running."""
     return {"message": "Synapz backend is running"}
 
 
 @app.get("/api/health")
 def health_check():
-    """Health check endpoint used by the frontend."""
     return {"status": "ok"}

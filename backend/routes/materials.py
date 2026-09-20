@@ -3,6 +3,7 @@ import mimetypes
 
 from models.material import MaterialResult, MaterialsResult
 from services.material_service import (
+    get_material_file,
     validate_file_material,
     validate_text_material,
 )
@@ -106,7 +107,8 @@ async def create_material(
             raise HTTPException(
                 status_code=500,
                 detail="We couldn't save your material. Please try again."
-            )
+                file_data=file_data
+        )
 
         return {
             "success": True,
@@ -143,7 +145,8 @@ async def create_material(
         raise HTTPException(
             status_code=500,
             detail="We couldn't save your material. Please try again."
-        )
+            content=content.strip(),
+    )
 
     return {
         "success": True,

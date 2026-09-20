@@ -14,6 +14,11 @@ ALLOWED_FILE_TYPES = {
     ".webp": "IMAGE",
 }
 
+materials: list[dict] = []
+material_files: dict[int, bytes] = {}
+
+_next_material_id = 1
+
 def validate_text_material(
     title: str | None,
     content: str | None,
