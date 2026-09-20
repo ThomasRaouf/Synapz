@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routes.materials import router as materials_router
+from routes.summaries import router as summaries_router
 
 
 app = FastAPI(
@@ -28,6 +29,7 @@ app.add_middleware(
 
 
 app.include_router(materials_router)
+app.include_router(summaries_router)
 
 
 @app.get("/")

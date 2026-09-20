@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/materials.css">
   <link rel="stylesheet" href="css/material-workspace.css">
   <link rel="stylesheet" href="css/mindmap.css">
+  <link rel="stylesheet" href="css/summary.css"
 </head>
 
 <body>
@@ -359,9 +360,9 @@
             <div class="resource-card">
               <div class="resource-info">
                 <h5>Summary</h5>
-                <p class="resource-state unavailable">Not generated yet</p>
+                <p class="resource-state available">AI Generated</p>
               </div>
-              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+              <button id="workspace-view-summary" class="btn-resource btn-primary">View</button>
             </div>
             <div class="resource-card">
               <div class="resource-info">
@@ -395,6 +396,22 @@
       </div>
     </div>
   </div>
+
+  <div id="summary-modal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-labelledby="summary-modal-title">
+      <div class="modal-header">
+        <h3 id="summary-modal-title">AI Summary</h3>
+        <button id="close-summary-btn" class="close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body summary-modal-body" id="summary-modal-body">
+        <!-- summary ui / loading state will be injected here (hopefully) -->
+      </div>
+      <div class="modal-footer">
+        <button id="close-summary-action" class="btn-primary w-full">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/api.js"></script>
   <script src="js/material-store.js"></script>
   <script src="js/material-context.js"></script>
@@ -403,6 +420,7 @@
   <script src="js/mindmap.js"></script>
   <script src="js/main.js"></script>
   <script src="js/quiz.js"></script>
+  <script src="js/summary.js"></script>
 </body>
 
 </html>
