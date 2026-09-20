@@ -7,6 +7,10 @@ function openMaterialDetail(id) {
     selectedMaterial = materialsData.find(m => m.id === id);
     if (!selectedMaterial) return;
 
+    if (typeof setCurrentMaterial === 'function') {
+        setCurrentMaterial(id);
+    }
+
     renderWorkspace();
 
     const modal = document.getElementById("material-detail-modal");
@@ -67,6 +71,32 @@ function setupMaterialWorkspace() {
             const flashcardsNavBtn = document.querySelector('.nav-item[data-view="flashcards"]');
             if (flashcardsNavBtn) {
                 flashcardsNavBtn.click();
+            }
+        });
+    }
+    
+    //quiz
+    const practiceQuizBtn = document.getElementById("workspace-practice-quiz");
+    if (practiceQuizBtn) {
+        practiceQuizBtn.addEventListener("click", () => {
+            closeMaterialDetail();
+
+            const quizzesNavBtn = document.querySelector('.nav-item[data-view="quizzes"]');
+            if (quizzesNavBtn) {
+                quizzesNavBtn.click();
+            }
+        });
+    }
+
+    //mindmap
+    const exploreMindmapBtn = document.getElementById("workspace-explore-mindmap");
+    if (exploreMindmapBtn) {
+        exploreMindmapBtn.addEventListener("click", () => {
+            closeMaterialDetail();
+
+            const mindmapsNavBtn = document.querySelector('.nav-item[data-view="mindmaps"]');
+            if (mindmapsNavBtn) {
+                mindmapsNavBtn.click();
             }
         });
     }
