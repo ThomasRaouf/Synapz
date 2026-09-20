@@ -106,9 +106,9 @@ async def create_material(
             supabase_service.delete_file(storage_path)
             raise HTTPException(
                 status_code=500,
-                detail="We couldn't save your material. Please try again."
+                detail="We couldn't save your material. Please try again.",
                 file_data=file_data
-        )
+            )
 
         return {
             "success": True,
@@ -144,9 +144,9 @@ async def create_material(
         print(f"Database insert error: {e}")
         raise HTTPException(
             status_code=500,
-            detail="We couldn't save your material. Please try again."
+            detail="We couldn't save your material. Please try again.",
             content=content.strip(),
-    )
+        )
 
     return {
         "success": True,
