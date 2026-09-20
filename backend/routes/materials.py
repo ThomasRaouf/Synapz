@@ -1,6 +1,10 @@
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 
+from models.material import MaterialResult, MaterialsResult
 from services.material_service import (
+    create_material_record,
+    get_all_materials,
+    get_material_by_id,
     validate_file_material,
     validate_text_material,
 )
@@ -14,6 +18,7 @@ router = APIRouter(
 
 @router.post(
     "",
+    response_model=MaterialResult,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_material(
@@ -62,13 +67,14 @@ async def create_material(
             else file.filename
         )
 
+        material = create_material_record(
+            title=material_title,
+            material_type=detected_type,
+        )
+
         return {
             "success": True,
-            "material": {
-                "title": material_title,
-                "type": detected_type,
-                "status": "received",
-            },
+            "material": material,
         }
 
     # Text material
@@ -84,11 +90,44 @@ async def create_material(
             detail=error,
         )
 
+    material= create_material_record(
+        title=title.strip(),
+        material_type="TEXT",
+    )
+
     return {
         "success": True,
-        "material": {
-            "title": title.strip(),
-            "type": "TEXT",
-            "status": "received",
-        },
+        "material": material
+    }
+
+@router.get(
+    "",
+    response_model=MaterialsResult,
+)
+def list_materials():
+    """Return stored materials"""
+
+    return {
+        "success": True,
+        "materials": get_all_materials(),
+    }
+
+@router.get(
+    "/{material_id}",
+    response_model=MaterialResult,
+)
+def get_material(material_id: int):
+    """Return a material by id"""
+
+    material= get_material_by_id(material_id)
+
+    if material is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Material with id {material_id} not found",
+        )
+
+    return {
+        "success": True,
+        "material": material,
     }
