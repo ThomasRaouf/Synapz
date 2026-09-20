@@ -24,6 +24,7 @@ function setupNavigation() {
         nav.classList.remove("active");
         nav.removeAttribute("aria-current");
       });
+
       item.classList.add("active");
       item.setAttribute("aria-current", "page");
 
@@ -48,7 +49,7 @@ function setupNavigation() {
       if (typeof updateMaterialContextDisplays === 'function') {
         updateMaterialContextDisplays();
       }
-      
+
       if (targetViewName === "mindmaps") {
         initMindMap();
       }
@@ -60,15 +61,20 @@ function setupNavigation() {
   });
 
   const initialHash = window.location.hash;
+
   if (initialHash) {
-    const targetLink = document.querySelector(`.nav-item[href="${initialHash}"]`);
+    const targetLink = document.querySelector(
+      `.nav-item[href="${initialHash}"]`
+    );
+
     if (targetLink) {
       targetLink.click();
     }
   }
 }
 
-// Setup simple UI Interactions (Mock upload, mobile sidebar)
+
+// Setup simple UI Interactions
 function setupInteractions() {
   // Mobile Sidebar Toggle
   const sidebar = document.getElementById("sidebar");
@@ -116,6 +122,7 @@ function setupUploadModal() {
 
   const closeModal = () => {
     if (!modal) return;
+
     modal.classList.add("hidden");
     modal.setAttribute("aria-hidden", "true");
     resetForm();
@@ -163,7 +170,8 @@ function setupUploadModal() {
   }, false);
 
   dropZone.addEventListener("click", (e) => {
-    if (e.target !== removeFileBtn && !removeFileBtn.contains(e.target)) {
+    if (e.target !== removeFileBtn &&
+        !removeFileBtn.contains(e.target)) {
       fileInput.click();
     }
   });
@@ -185,7 +193,6 @@ function setupUploadModal() {
     dropZoneContent.classList.add("hidden");
     dropZoneContent.style.display = "none";
     fileDisplay.classList.remove("hidden");
-
   }
 
   function resetFile() {
@@ -194,7 +201,6 @@ function setupUploadModal() {
     fileDisplay.classList.add("hidden");
     dropZoneContent.classList.remove("hidden");
     dropZoneContent.style.display = "flex";
-
   }
 
   removeFileBtn.addEventListener("click", (e) => {
@@ -212,6 +218,7 @@ function setupUploadModal() {
     resetFile();
     notesInput.value = "";
     hideValidation();
+
     submitBtn.disabled = false;
     submitBtn.querySelector(".btn-text").textContent = "Process Material";
     submitBtn.querySelector(".btn-loader").classList.add("hidden");
@@ -219,14 +226,20 @@ function setupUploadModal() {
 
   function getFileType(fileName) {
     const ext = fileName.split('.').pop().toLowerCase();
+
     if (ext === 'pdf') return 'PDF';
     if (['doc', 'docx'].includes(ext)) return 'Word Doc';
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'Image';
+
     return 'Text';
   }
 
   function getNotesTitle(notes) {
-    const lines = notes.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const lines = notes
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+
     return lines.length > 0 ? lines[0] : 'Untitled Notes';
   }
 
@@ -235,7 +248,9 @@ function setupUploadModal() {
     const hasNotes = notesInput.value.trim().length > 0;
 
     if (!hasFile && !hasNotes) {
-      validationMessage.textContent = "Please provide a file or paste your notes.";
+      validationMessage.textContent =
+        "Please provide a file or paste your notes.";
+
       validationMessage.classList.remove("hidden");
       return;
     }
@@ -245,6 +260,7 @@ function setupUploadModal() {
     submitBtn.querySelector(".btn-loader").classList.remove("hidden");
 
     const uploadMessage = document.getElementById("upload-message");
+
     if (uploadMessage) {
       uploadMessage.classList.add("hidden");
     }
@@ -260,55 +276,112 @@ function setupUploadModal() {
     }
 
     try {
-
       const responseData = await uploadMaterialRequest(formData);
+      const materialId = responseData.material.id;
+
       const newMaterial = {
-        id: Date.now(),
-        subject: "General",
+        id: materialId,
+        subject: responseData.material.subject || "General",
         title: responseData.material.title,
-        type: responseData.material.type === 'TEXT' ? 'Text' : (responseData.material.type || 'Text'),
-        status: responseData.material.status === 'recieved' ? 'New' : 'New',
+        type: responseData.material.type === "TEXT"
+          ? "Text"
+          : (responseData.material.type || "Text"),
+        status: "Processing",
         date: "Added just now",
         addedAt: Date.now(),
-        source: hasFile ? "file" : "notes"
+        source: responseData.material.source ||
+          (hasFile ? "file" : "notes")
       };
 
       addMaterial(newMaterial);
       refreshMaterials();
+
+      try {
+        const processingResult =
+          await processMaterialRequest(materialId);
+
+        newMaterial.status = "Completed";
+
+        console.log(
+          "Material processed successfully:",
+          processingResult
+        );
+
+      } catch (processingError) {
+        newMaterial.status = "Failed";
+
+        console.error(
+          "Material processing failed:",
+          processingError
+        );
+      }
+
+      // Save the updated status
+      const currentMaterials = getMaterials();
+      const updatedMaterials = currentMaterials.map(material =>
+        material.id === materialId
+          ? { ...material, status: newMaterial.status }
+          : material
+      );
+
+      saveMaterials(updatedMaterials);
+      refreshMaterials();
+
       closeModal();
 
       if (uploadMessage) {
-        uploadMessage.innerHTML = "<p><strong>Success!</strong> Material recieved successfully.</p>";
+        uploadMessage.innerHTML =
+          "<p><strong>Success!</strong> Material processed successfully.</p>";
+
         uploadMessage.classList.remove("hidden");
+
         setTimeout(() => {
           uploadMessage.classList.add("hidden");
         }, 4000);
       }
 
-    }
+    } catch (error) {
+      validationMessage.textContent =
+        error.message ||
+        "We couldn't process this material, please try again.";
 
-    catch (error) {
-      validationMessage.textContent = error.message || "We could't process this material, please try again.";
       validationMessage.classList.remove("hidden");
-    }
-    finally {
+
+    } finally {
       submitBtn.disabled = false;
-      submitBtn.querySelector(".btn-text").textContent = "Process Material";
+
+      submitBtn.querySelector(".btn-text").textContent =
+        "Process Material";
+
       submitBtn.querySelector(".btn-loader").classList.add("hidden");
     }
-
-        
   });
 }
+
 
 // Flashcards Interactions
 function setupFlashcards() {
   const flashcardsData = [
-    { question: "What is Newton's 2nd law?", answer: "F = ma (Force = mass x acceleration)" },
-    { question: "What is the power house of the cell?", answer: "Mitochondria" },
-    { question: "What is the formula of photosynthesis?", answer: "6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂" },
-    { question: "What is the speed of light in vacuum?", answer: "299,792,458 m/s (≈ 3 x 10⁸ m/s" },
-    { question: "What does DNA stand for?", answer: "Deoxyribonucleic Acid" }
+    {
+      question: "What is Newton's 2nd law?",
+      answer: "F = ma (Force = mass x acceleration)"
+    },
+    {
+      question: "What is the power house of the cell?",
+      answer: "Mitochondria"
+    },
+    {
+      question: "What is the formula of photosynthesis?",
+      answer: "6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂"
+    },
+    {
+      question: "What is the speed of light in vacuum?",
+      answer: "299,792,458 m/s (≈ 3 x 10⁸ m/s"
+    },
+    {
+      question: "What does DNA stand for?",
+      answer: "Deoxyribonucleic Acid"
+    }
   ];
 
   let currentCardIndex = 0;
@@ -327,26 +400,39 @@ function setupFlashcards() {
 
   function renderCard() {
     cardInner.classList.remove("flipped");
+
     const current = flashcardsData[currentCardIndex];
 
     if (questionEl) questionEl.textContent = current.question;
     if (answerEl) answerEl.textContent = current.answer;
-    if (counterEl) counterEl.textContent = `card ${currentCardIndex + 1} of ${flashcardsData.length}`;
 
-    if (prevBtn) prevBtn.disabled = currentCardIndex === 0;
-    if (nextBtn) nextBtn.disabled = currentCardIndex === flashcardsData.length - 1;
+    if (counterEl) {
+      counterEl.textContent =
+        `card ${currentCardIndex + 1} of ${flashcardsData.length}`;
+    }
+
+    if (prevBtn) {
+      prevBtn.disabled = currentCardIndex === 0;
+    }
+
+    if (nextBtn) {
+      nextBtn.disabled =
+        currentCardIndex === flashcardsData.length - 1;
+    }
 
     if (dotsContainer) {
       dotsContainer.innerHTML = "";
+
       flashcardsData.forEach((_, idx) => {
         const dot = document.createElement("div");
-        dot.className = `dot ${idx === currentCardIndex ? "active" : ""}`;
+        dot.className =
+          `dot ${idx === currentCardIndex ? "active" : ""}`;
+
         dotsContainer.appendChild(dot);
       });
     }
   }
 
-  // Flip action
   if (revealBtn) {
     revealBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -360,10 +446,10 @@ function setupFlashcards() {
     });
   }
 
-  // Cards navigation actions
   if (nextBtn) {
     nextBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+
       if (currentCardIndex < flashcardsData.length - 1) {
         currentCardIndex++;
         renderCard();
@@ -374,6 +460,7 @@ function setupFlashcards() {
   if (prevBtn) {
     prevBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+
       if (currentCardIndex > 0) {
         currentCardIndex--;
         renderCard();
@@ -383,6 +470,7 @@ function setupFlashcards() {
 
   renderCard();
 }
+
 
 // Initialize Dashboard when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
