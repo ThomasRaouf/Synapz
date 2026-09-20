@@ -15,6 +15,7 @@ ALLOWED_FILE_TYPES = {
 }
 
 materials: list[dict] = []
+material_files: dict[int, bytes] = {}
 
 _next_material_id = 1
 
@@ -27,8 +28,9 @@ def validate_text_material(
     if not title or not title.strip():
         return False, "Title is required"
 
-    if material_type != "text":
-        return False, "Text materials must have type='text'"
+
+    if not material_type or material_type.upper() != "TEXT":
+        return False, "Text materials must have type='TEXT'"
 
     if not content or not content.strip():
         return False, "Text content cannot be empty"
@@ -55,37 +57,3 @@ def validate_file_material(
     material_type = ALLOWED_FILE_TYPES[extension]
 
     return True, material_type, None
-
-def create_material_record(
-        title: str,
-        material_type: str,
-) -> dict:
-    """Create and store a new material"""
-
-    global _next_material_id
-
-    material = {
-        "id": _next_material_id,
-        "title": title,
-        "type": material_type,
-        "status": "received",
-    }
-
-    materials.append(material)
-    _next_material_id +=1
-
-    return material
-
-def get_all_materials() -> list[dict]:
-    """Return all stored materials"""
-
-    return materials
-
-def get_material_by_id(material_id: int) -> dict | None:
-    """Find a material by ID"""
-
-    for material in materials:
-        if material["id"] == material_id:
-            return material
-
-    return None
