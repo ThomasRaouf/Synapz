@@ -1,13 +1,12 @@
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+import mimetypes
 
 from models.material import MaterialResult, MaterialsResult
 from services.material_service import (
-    create_material_record,
-    get_all_materials,
-    get_material_by_id,
     validate_file_material,
     validate_text_material,
 )
+from services import supabase_service
 
 
 router = APIRouter(
@@ -67,10 +66,47 @@ async def create_material(
             else file.filename
         )
 
-        material = create_material_record(
-            title=material_title,
-            material_type=detected_type,
-        )
+        #content type
+        content_type, _ = mimetypes.guess_type(file.filename or "")
+        if not content_type:
+            content_type = "application/octet-stream"
+
+        #upload to supabase
+        try:
+            storage_path = supabase_service.upload_file(
+                filename=file.filename,
+                file_data=file_data,
+                content_type=content_type
+            )
+        except Exception as e:
+
+            print(f"Storage upload error: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail="We couldn't save your file. Please try again."
+            )
+
+        #insert to database
+        material_data = {
+            "title": material_title,
+            "subject": "General", #default
+            "type": detected_type,
+            "status": "New",
+            "storage_path": storage_path,
+            "original_filename": file.filename,
+            "source": "file",
+        }
+
+        try:
+            material = supabase_service.insert_material(material_data)
+        except Exception as e:
+            print(f"Database insert error: {e}")
+            #clean up
+            supabase_service.delete_file(storage_path)
+            raise HTTPException(
+                status_code=500,
+                detail="We couldn't save your material. Please try again."
+            )
 
         return {
             "success": True,
@@ -90,10 +126,24 @@ async def create_material(
             detail=error,
         )
 
-    material= create_material_record(
-        title=title.strip(),
-        material_type="TEXT",
-    )
+    material_data = {
+        "title": title.strip(),
+        "subject": "General",
+        "type": "Text",
+        "status": "New",
+        "storage_path": None,
+        "original_filename": None,
+        "source": "notes"
+    }
+
+    try:
+        material = supabase_service.insert_material(material_data)
+    except Exception as e:
+        print(f"Database insert error: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="We couldn't save your material. Please try again."
+        )
 
     return {
         "success": True,
@@ -107,9 +157,18 @@ async def create_material(
 def list_materials():
     """Return stored materials"""
 
+    try:
+        materials = supabase_service.get_materials()
+    except Exception as e:
+        print(f"Failed to fetch materials: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="The server is unavailable right now. Please try again."
+        )
+    
     return {
         "success": True,
-        "materials": get_all_materials(),
+        "materials": materials,
     }
 
 @router.get(
@@ -119,8 +178,15 @@ def list_materials():
 def get_material(material_id: int):
     """Return a material by id"""
 
-    material= get_material_by_id(material_id)
-
+    try:
+        material = supabase_service.get_material(material_id)
+    except Exception as e:
+        print(f"Failed to fetch materials: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail="The server is unavailable right now. Please try again."
+        )
+    
     if material is None:
         raise HTTPException(
             status_code=404,

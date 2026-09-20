@@ -1,10 +1,19 @@
+from datetime import datetime
+from uuid import UUID
 from pydantic import BaseModel
 
 class MaterialResponse(BaseModel):
     id: int
+    user_id: UUID | None = None
     title: str
+    subject: str
     type: str
     status: str
+    storage_path: str | None = None
+    original_filename: str | None = None
+    source: str | None = None
+    created_at: datetime
+    updated_at: datetime
 
 class MaterialResult(BaseModel):
     success: bool
