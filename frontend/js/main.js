@@ -48,7 +48,7 @@ function setupNavigation() {
       if (typeof updateMaterialContextDisplays === 'function') {
         updateMaterialContextDisplays();
       }
-      
+
       if (targetViewName === "mindmaps") {
         initMindMap();
       }
@@ -235,9 +235,19 @@ function setupUploadModal() {
     const hasNotes = notesInput.value.trim().length > 0;
 
     if (!hasFile && !hasNotes) {
-      validationMessage.textContent = "Please provide a file or paste your notes.";
+      validationMessage.textContent = "Please provide some study material.";
       validationMessage.classList.remove("hidden");
       return;
+    }
+
+    if (hasFile) {
+      const ext = selectedFile.name.split('.').pop().toLowerCase();
+      const supportedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+      if (!supportedExts.includes(ext)) {
+        validationMessage.textContent = "Unsupported file type.";
+        validationMessage.classList.remove("hidden");
+        return;
+      }
     }
 
     submitBtn.disabled = true;
@@ -255,7 +265,7 @@ function setupUploadModal() {
       formData.append("file", selectedFile);
     } else {
       formData.append("title", getNotesTitle(notesInput.value));
-      formData.append("type", "TEXT");
+      formData.append("type", "text");
       formData.append("content", notesInput.value);
     }
 
@@ -286,7 +296,7 @@ function setupUploadModal() {
       submitBtn.querySelector(".btn-loader").classList.add("hidden");
     }
 
-        
+
   });
 }
 
