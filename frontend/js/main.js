@@ -39,6 +39,16 @@ function setupNavigation() {
         }
       });
 
+      if (targetViewName === "dashboard" || targetViewName === "materials") {
+        if (typeof clearCurrentMaterial === 'function') {
+          clearCurrentMaterial();
+        }
+      }
+
+      if (typeof updateMaterialContextDisplays === 'function') {
+        updateMaterialContextDisplays();
+      }
+      
       if (targetViewName === "mindmaps") {
         initMindMap();
       }
