@@ -43,7 +43,7 @@ EDUCATIONAL MATERIAL TO SUMMARIZE:
 
         try:
             return json.loads(response.text)
-        except: json.JSONDecodeError:
+        except json.JSONDecodeError:
             raise Exception("AI response was not valid JSON.")
     
     except Exception as e:
