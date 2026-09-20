@@ -147,6 +147,7 @@
               <div class="flashcard-header">
                 <span class="card-counter" id="card-counter">Card 1 of 5</span>
               </div>
+              <p id="flashcards-material-context" class="text-muted" style="margin-bottom: 16px; text-align: center; display: none;"></p>
 
               <!-- Flip Card Container -->
               <div class="flashcard-wrapper" id="flashcard-wrapper">
@@ -183,6 +184,7 @@
               <section class="welcome-section" style="margin-bottom: 24px;">
                 <div class="welcome-text">
                   <h2>Available Quizzes</h2>
+                  <p id="quiz-material-context" class="text-muted" style="margin-bottom: 8px; display: none;"></p>
                   <p>Select a topic to test your knowledge.</p>
                 </div>
               </section>
@@ -197,6 +199,7 @@
 
             <div id="active-quiz" class="active-quiz-screen" style="display: none;">
               <div class="quiz-header">
+                <p id="active-quiz-material-context" class="text-muted" style="margin-bottom: 8px; font-size: 14px; display: none;"></p>
                 <div class="quiz-title-area">
                   <span class="quiz-title">Biochemistry Quiz</span>
                   <span id="quiz-progress-text" class="quiz-progress-text">Question 1 of 10</span>
@@ -249,6 +252,7 @@
             <div class="mindmap-header">
               <div>
                 <h2>Mind Maps</h2>
+                <p id="mindmap-material-context" class="text-muted" style="margin-top: 4px; display: none;"></p>
                 <p>Explore concepts and their connections</p>
               </div>
             </div>
@@ -369,16 +373,16 @@
             <div class="resource-card">
               <div class="resource-info">
                 <h5>Quiz</h5>
-                <p class="resource-state unavailable">Not generated yet</p>
+                <p class="resource-state available">Demo quiz available</p>
               </div>
-              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+              <button id="workspace-practice-quiz" class="btn-resource btn-primary">Practice</button>
             </div>
             <div class="resource-card">
               <div class="resource-info">
                 <h5>Mind Map</h5>
-                <p class="resource-state unavailable">Not generated yet</p>
+                <p class="resource-state available">Demo available</p>
               </div>
-              <button class="btn-resource btn-secondary" disabled>Coming soon</button>
+              <button id="workspace-explore-mindmap" class="btn-resource btn-primary">Explore</button>
             </div>
           </div>
         </div>
@@ -393,6 +397,7 @@
   </div>
   <script src="js/api.js"></script>
   <script src="js/material-store.js"></script>
+  <script src="js/material-context.js"></script>
   <script src="js/materials.js"></script>
   <script src="js/material-workspace.js"></script>
   <script src="js/mindmap.js"></script>
