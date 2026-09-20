@@ -10,7 +10,7 @@ class Definition(BaseModel):
     term: str
     definition: str
 
-class SummaryResponse(BsaeModel):
+class SummaryResponse(BaseModel):
     """The structured summary output expected from the AI."""
     title: str
     overview: str
