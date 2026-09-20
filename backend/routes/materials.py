@@ -5,6 +5,7 @@ from services.material_service import (
     create_material_record,
     get_all_materials,
     get_material_by_id,
+    get_material_file,
     validate_file_material,
     validate_text_material,
 )
@@ -70,6 +71,7 @@ async def create_material(
         material = create_material_record(
             title=material_title,
             material_type=detected_type,
+            file_data=file_data
         )
 
         return {
@@ -93,6 +95,7 @@ async def create_material(
     material= create_material_record(
         title=title.strip(),
         material_type="TEXT",
+        content=content.strip(),
     )
 
     return {

@@ -2,3 +2,5 @@ fastapi[standard]
 uvicorn[standard]
 google-genai
 python-dotenv
+pymupdf
+python-docx

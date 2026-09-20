@@ -15,6 +15,7 @@ ALLOWED_FILE_TYPES = {
 }
 
 materials: list[dict] = []
+material_files: dict[int, bytes] = {}
 
 _next_material_id = 1
 
@@ -59,6 +60,8 @@ def validate_file_material(
 def create_material_record(
         title: str,
         material_type: str,
+        file_data: bytes | None = None,
+        content: str | None = None,
 ) -> dict:
     """Create and store a new material"""
 
@@ -72,6 +75,13 @@ def create_material_record(
     }
 
     materials.append(material)
+
+    if file_data is not None:
+        material_files[_next_material_id] = file_data
+
+    if content is not None:
+        material["content"] = content
+
     _next_material_id +=1
 
     return material
@@ -89,3 +99,31 @@ def get_material_by_id(material_id: int) -> dict | None:
             return material
 
     return None
+
+def get_material_file(material_id: int) -> bytes | None:
+    """Return the original uploaded file"""
+
+    return material_files.get(material_id)
+
+def save_processed_text(
+        material_id: int,
+        text: str,
+) -> dict | None:
+    """Store processed text for material"""
+
+    material = get_material_by_id(material_id)
+
+    if material is None:
+        return None
+
+    material["processed_text"] = text
+
+    return material
+
+def get_processed_text(material_id: int) -> str | None:
+    material = get_material_by_id(material_id)
+
+    if material is None:
+        return None
+
+    return material.get("processed_text")
