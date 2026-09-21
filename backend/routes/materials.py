@@ -67,12 +67,12 @@ async def create_material(
             else file.filename
         )
 
-        #content type
+
         content_type, _ = mimetypes.guess_type(file.filename or "")
         if not content_type:
             content_type = "application/octet-stream"
 
-        #upload to supabase
+
         try:
             storage_path = supabase_service.upload_file(
                 filename=file.filename,
@@ -87,10 +87,10 @@ async def create_material(
                 detail="We couldn't save your file. Please try again."
             )
 
-        #insert to database
+
         material_data = {
             "title": material_title,
-            "subject": "General", #default
+            "subject": "General",
             "type": detected_type,
             "status": "New",
             "storage_path": storage_path,
@@ -102,7 +102,7 @@ async def create_material(
             material = supabase_service.insert_material(material_data)
         except Exception as e:
             print(f"Database insert error: {e}")
-            #clean up
+
             supabase_service.delete_file(storage_path)
             raise HTTPException(
                 status_code=500,

@@ -6,7 +6,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 load_dotenv()
 
-#one time creation
+
 _supabase_client: Client | None = None
 
 def get_supabase_client() -> Client:
@@ -23,16 +23,16 @@ def get_bucket_name() -> str:
     return os.environ.get("SUPABASE_BUCKET", "study-materials")
 
 def sanitize_filename(filename: str) -> str:
-    #normalize weird characters
+
     if not filename:
         return ""
-    #replace them with an underscore
+
     safe = re.sub(r'[^\w\-\.]', '_', filename)
     return safe
 
 def upload_file(filename: str, file_data: bytes, content_type: str = "application/octet-stream") -> str:
 
-    #upload file to storage and return its path
+
 
     client = get_supabase_client()
     bucket = get_bucket_name()
@@ -41,7 +41,7 @@ def upload_file(filename: str, file_data: bytes, content_type: str = "applicatio
     unique_folder = str(uuid.uuid4())
     storage_path = f"materials/{unique_folder}/{safe_filename}"
 
-    #upload
+
     response = client.storage.from_(bucket).upload(
         path=storage_path,
         file=file_data,
@@ -52,7 +52,7 @@ def upload_file(filename: str, file_data: bytes, content_type: str = "applicatio
 
 def delete_file(storage_path: str):
 
-    #cleanup
+
 
     if not storage_path:
         return
@@ -61,12 +61,12 @@ def delete_file(storage_path: str):
     try:
         client.storage.from_(bucket).remove([storage_path])
     except Exception as e:
-        #log the error
+
         print(f"Failed to delete storage file {storage_path}: {e}")
 
 def insert_material(material_data: dict) -> dict:
 
-    #insert material record to db
+
 
     client = get_supabase_client()
     response = client.table("materials").insert(material_data).execute()
@@ -76,7 +76,7 @@ def insert_material(material_data: dict) -> dict:
 
 def get_materials() -> list[dict]:
 
-    #get all materials from db
+
 
     client = get_supabase_client()
     response = client.table("materials").select("*").order("created_at", desc=True).execute()
@@ -84,7 +84,7 @@ def get_materials() -> list[dict]:
 
 def get_material(material_id: int) -> dict | None:
 
-    #get a material by id
+
 
     client = get_supabase_client()
     response = client.table("materials").select("*").eq("id", material_id).execute()

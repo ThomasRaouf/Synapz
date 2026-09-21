@@ -1,4 +1,4 @@
-//material-workspace.js
+
 
 let selectedMaterial = null;
 
@@ -38,7 +38,7 @@ function renderWorkspace() {
     document.getElementById("material-detail-date").textContent = selectedMaterial.date;
     
 
-    //show title or state
+
     let originalText = selectedMaterial.title;
     if (selectedMaterial.source === "notes") {
         originalText = selectedMaterial.title + " (Source: Notes)";
@@ -48,7 +48,7 @@ function renderWorkspace() {
 
 
 function setupMaterialWorkspace() {
-    //close btn
+
     const modalCloseBtn = document.getElementById("close-material-detail-btn");
     const modalCloseAction = document.getElementById("close-material-detail-action");
     const modalOverlay = document.getElementById("material-detail-modal");
@@ -63,7 +63,7 @@ function setupMaterialWorkspace() {
         });
     }
 
-    //flashcards
+
     const studyFlashcardsBtn = document.getElementById("workspace-study-flashcards");
     if (studyFlashcardsBtn) {
         studyFlashcardsBtn.addEventListener("click", () => {
@@ -76,7 +76,7 @@ function setupMaterialWorkspace() {
         });
     }
     
-    //quiz
+
     const practiceQuizBtn = document.getElementById("workspace-practice-quiz");
     if (practiceQuizBtn) {
         practiceQuizBtn.addEventListener("click", () => {
@@ -89,7 +89,7 @@ function setupMaterialWorkspace() {
         });
     }
 
-    //mindmap
+
     const exploreMindmapBtn = document.getElementById("workspace-explore-mindmap");
     if (exploreMindmapBtn) {
         exploreMindmapBtn.addEventListener("click", () => {

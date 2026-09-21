@@ -176,15 +176,15 @@ function clearFilters() {
 //modal handling transferred to workspace
 
 //refresh
-async function refreshMaterials() {
-    await loadMaterialsFromBackend();
+function refreshMaterials() {
+    loadMaterialsFromStore();
     renderDashboardMaterials();
     filterMaterials(); //re-apply existing filters
 }
 
 //init features
-async function initMaterials() {
-    await loadMaterialsFromBackend();
+function initMaterials() {
+    loadMaterialsFromStore();
     //render
     renderDashboardMaterials();
     filterMaterials(); //library grid
