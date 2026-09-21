@@ -3,8 +3,44 @@
 let materialsData = [];
 let filteredMaterials = [];
 
-async function loadMaterialsFromStore() {
-    await loadMaterialsFromServer();
+function formatRelativeDate(dateStr) {
+    const date = new Date(dateStr)
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffDays === 0) return "Added just now";
+    if (diffDays === 1) return "Added 1 day ago";
+    if (diffDays < 7) return `Added ${diffDays} days ago`;
+    if (diffDays < 14) return "Added 1 week ago";
+    return `Added ${Math.floor(diffDays/7)} weeks ago`;
+}
+
+async function loadMaterialsFromBackend() {
+    try {
+        const response = await getMaterialsRequest();
+        if (response && response.materials) {
+
+            materialsData = response.materials.map(m => ({
+                id: m.id,
+                user_id: m.user_id,
+                subject: m.subject,
+                title: m.title,
+                type: m.type,
+                status: m.status,
+                date: formatRelativeDate(m.created_at),
+                addedAt: new Date(m.created_at).getTime(),
+                source: m.source
+            }));
+            saveMaterials(materialsData);
+            filteredMaterials = [...materialsData];
+            return;
+        }
+    } catch (error) {
+        console.warn("Could not connect to the server. Showing saved local materials.", error);
+
+    }
+
     materialsData = getMaterials();
     filteredMaterials = [...materialsData];
 }
@@ -137,49 +173,18 @@ function clearFilters() {
     filterMaterials();
 }
 
+//modal handling transferred to workspace
+
+//refresh
 async function refreshMaterials() {
-    try {
-        await loadMaterialsFromStore();
-        renderDashboardMaterials();
-        filterMaterials();
-    }
-    catch (e) {
-        console.error("Failed to refresh materials", e);
-    }
+    await loadMaterialsFromBackend();
+    renderDashboardMaterials();
+    filterMaterials(); //re-apply existing filters
 }
 
-
+//init features
 async function initMaterials() {
-
-    const dashboardGrid = document.querySelector("#view-dashboard .materials-grid");
-    const libraryGrid = document.getElementById("library-materials-grid");
-    const emptyState = document.getElementById("material-empty-state");
-    const loadingHTML = `<div class="material-card" style="text-align: center; padding: 2rem; grid-column: 1 / -1;">Loading materials...</div>`;
-    if (dashboardGrid) dashboardGrid.innerHTML = loadingHTML;
-    if (libraryGrid) {
-        libraryGrid.innerHTML = loadingHTML;
-        libraryGrid.style.display = "grid";
-        if (emptyState) emptyState.classList.add("hidden");
-    }
-
-    try {
-        await loadMaterialsFromStore();
-    }
-    catch (e) {
-        const errorHTML = `
-            <div class="material-card" style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
-                <p style ="margin-bottom: 1rem; color: #dc3545;"Failed to load materials.</p>
-                <button class="btn-primary" onclick="initMaterials()">Try Again</button>
-            </div>
-        `;
-        if (dashboardGrid) dashboardGrid.innerHTML = errorHTML;
-        if (libraryGrid) {
-            libraryGrid.innerHTML = errorHTML;
-            libraryGrid.style.display = "grid";
-        }
-        return;
-    }
-
+    await loadMaterialsFromBackend();
     //render
     renderDashboardMaterials();
     filterMaterials(); //library grid

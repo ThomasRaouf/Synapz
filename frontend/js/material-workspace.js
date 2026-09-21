@@ -46,6 +46,7 @@ function renderWorkspace() {
     document.getElementById("material-detail-original").textContent = originalText;
 }
 
+
 function setupMaterialWorkspace() {
     //close btn
     const modalCloseBtn = document.getElementById("close-material-detail-btn");
