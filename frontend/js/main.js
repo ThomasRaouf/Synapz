@@ -272,16 +272,7 @@ function setupUploadModal() {
     try {
 
       const responseData = await uploadMaterialRequest(formData);
-      const newMaterial = {
-        id: Date.now(),
-        subject: "General",
-        title: responseData.material.title,
-        type: responseData.material.type,
-        status: responseData.material.status,
-        date: "Added just now",
-        addedAt: Date.now(),
-        source: hasFile ? "file" : "notes"
-      };
+      const newMaterial = mapApiToFrontend(responseData.material);
 
       addMaterial(newMaterial);
       refreshMaterials();

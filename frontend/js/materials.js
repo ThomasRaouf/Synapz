@@ -3,25 +3,29 @@
 let materialsData = [];
 let filteredMaterials = [];
 
-function loadMaterialsFromStore() {
+async function loadMaterialsFromStore() {
+    await loadMaterialsFromServer();
     materialsData = getMaterials();
     filteredMaterials = [...materialsData];
 }
 
 
 function getStatusClass(status) {
-    switch(status.toLowerCase()) {
-        case 'completed': return 'status-completed';
-        case 'in progress': return 'status-inprogress';
+    switch (status.toLowerCase()) {
+        case 'completed':
+        case 'processed': return 'status-completed';
+        case 'in progress':
+        case 'processing': return 'status-inprogress';
         case 'ready': return 'status-ready';
         case 'new': return 'status-new';
+        case 'failed': return 'status-failed';
         default: return 'status-new';
     }
 }
 
 // Generate HTML for a single card
 function createCardHTML(material) {
-  return `
+    return `
     <div class="card-header">
       <span class="card-type">${material.type}</span>
       <span class="card-status ${getStatusClass(material.status)}">${material.status}</span>
@@ -79,9 +83,9 @@ function filterMaterials() {
 
     filteredMaterials = materialsData.filter(material => {
         // Search match
-        const searchMatch = material.subject.toLowerCase().includes(searchInput) || 
-                        material.title.toLowerCase().includes(searchInput) ||
-                        material.type.toLowerCase().includes(searchInput);
+        const searchMatch = material.subject.toLowerCase().includes(searchInput) ||
+            material.title.toLowerCase().includes(searchInput) ||
+            material.type.toLowerCase().includes(searchInput);
 
         // Type match
         const typeMatch = typeFilter === "All" || material.type === typeFilter;
@@ -133,18 +137,49 @@ function clearFilters() {
     filterMaterials();
 }
 
-//modal handling transferred to workspace
-
-//refresh
-function refreshMaterials() {
-    loadMaterialsFromStore();
-    renderDashboardMaterials();
-    filterMaterials(); //re-apply existing filters
+async function refreshMaterials() {
+    try {
+        await loadMaterialsFromStore();
+        renderDashboardMaterials();
+        filterMaterials();
+    }
+    catch (e) {
+        console.error("Failed to refresh materials", e);
+    }
 }
 
-//init features
-function initMaterials() {
-    loadMaterialsFromStore();
+
+async function initMaterials() {
+
+    const dashboardGrid = document.querySelector("#view-dashboard .materials-grid");
+    const libraryGrid = document.getElementById("library-materials-grid");
+    const emptyState = document.getElementById("material-empty-state");
+    const loadingHTML = `<div class="material-card" style="text-align: center; padding: 2rem; grid-column: 1 / -1;">Loading materials...</div>`;
+    if (dashboardGrid) dashboardGrid.innerHTML = loadingHTML;
+    if (libraryGrid) {
+        libraryGrid.innerHTML = loadingHTML;
+        libraryGrid.style.display = "grid";
+        if (emptyState) emptyState.classList.add("hidden");
+    }
+
+    try {
+        await loadMaterialsFromStore();
+    }
+    catch (e) {
+        const errorHTML = `
+            <div class="material-card" style="text-align: center; padding: 2rem; grid-column: 1 / -1;">
+                <p style ="margin-bottom: 1rem; color: #dc3545;"Failed to load materials.</p>
+                <button class="btn-primary" onclick="initMaterials()">Try Again</button>
+            </div>
+        `;
+        if (dashboardGrid) dashboardGrid.innerHTML = errorHTML;
+        if (libraryGrid) {
+            libraryGrid.innerHTML = errorHTML;
+            libraryGrid.style.display = "grid";
+        }
+        return;
+    }
+
     //render
     renderDashboardMaterials();
     filterMaterials(); //library grid

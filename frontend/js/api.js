@@ -35,3 +35,32 @@ async function uploadMaterialRequest(formData) {
     body: formData,
   });
 }
+
+async function fetchMaterials () {
+  return await apiRequest("/api/materials");
+
+}
+
+async function fetchMaterial(id) {
+  return await apiRequest(`/api/materials/${id}`);
+
+}
+
+async function processMaterial(id) {
+  return await apiRequest(`/api/materials/${id}/process`, {
+    method: "POST"
+  });
+
+}
+
+async function generateSummary(id) {
+  return await apiRequest(`/api/materials/${id}/summary`, {
+    method: "POST"
+  });
+
+}
+
+async function fetchSummary(id) {
+  return await apiRequest(`/api/materials/${id}/summary`);
+
+}

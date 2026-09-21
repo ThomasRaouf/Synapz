@@ -5,11 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSummaryAction = document.getElementById("close-summary-action");
     const summaryModalBody = document.getElementById("summary-modal-body");
     const viewSummaryBtn = document.getElementByIdf("workspace-view-summary");
-    // we use a sample text here for development purposes, once the document processor is ready, we'll exctract it from the actual stuff.
-    const SAMPLE_TEXT = `
-    Cellular respiration is a set of metabolic reactions and processes that take place in the cells of organisms to convert biochemical energy from nutrients into adenosine triphosphate (ATP), and then release waste products. The reactions involved in respiration are catabolic reactions, which break large molecules into smaller ones, releasing energy. Respiration is one of the key ways a cell releases chemical energy to fuel cellular activity. The overall reaction occurs in a series of biochemical steps, some of which are redox reactions. Although cellular respiration is technically a combustion reaction, it clearly does not resemble one when it occurs in a living cell because of the slow, controlled release of energy from the series of reactions.
-The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chain. Glycolysis occurs in the cytoplasm and does not require oxygen. The Krebs cycle and Electron Transport Chain occur in the mitochondria and require oxygen.
-    `;
+    
 
     const renderLoadingState = () => {
         summaryModalBody.innerHTML = `
@@ -31,7 +27,7 @@ The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chai
     };
 
     const renderSummary = (SummaryData) => {
-        const {title, overview, key_concepts, important_points, definitions, quick_review} = SummaryData;
+        const { title, overview, key_concepts, important_points, definitions, quick_review } = SummaryData;
         let html = `<div class="summary-container">`;
         html += `
             <div class="summary-section">
@@ -101,43 +97,48 @@ The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chai
 
     };
 
-    const fetchSummary = async (text) => {
-        try {
-            const response = await fetch("http://localhost:8000/api/summaries", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({text})
-            });
+    const loadAndRenderSummary = async () => {
+        if (!window.selectedMaterial) {
+            renderErrorState("No material selected.");
+            return;
+        }
 
-            if (!response.ok) {
-                let errorMsg = "Failed to generate summary.";
-                try {
-                    const errData = await response.json();
-                    if (errData.detail) errorMsg = errData.detail;
-                } 
-                catch (e) {
-                    // ignore
+        const materialId = window.selectedMaterial.id;
+        renderLoadingState();
+
+        try {
+            let envelope;
+            try {
+                envelope = await fetchSummary(materialId);
+            }
+            catch (err) {
+                if (!err.message.includes("Summary not found") && !err.message.includes("Not Found")) {
+                    throw errl
                 }
-                throw new Error(errorMsg);
             }
 
-            const data = await response.json();
-            renderSummary(data);
+            if (!envelope || !envelope.summary) {
+                envelpoe = await generateSummary(materialId);
+            }
+            if (envelope && envelope.success && envelope.summary) {
+                renderSummary(envelope.summary);
+
+            }
+            else {
+                throw new Error("Invalid summary format returned by server.");
+            }
         }
         catch (error) {
+            console.error("Summary error:", error);
             renderErrorState(error.message || "An unexpected error occured.");
         }
+
+
     };
 
     const openSummaryModal = () => {
         summaryModal.classList.remove("hidden");
-        // in a real flow we'd check if we alr have summary cached for this material, we'll generate on the fly for now.
-        renderLoadingState();
-        setTimeout(() => {
-            fetchSummary(SAMPLE_TEXT);
-        }, 100);
+        loadAndRenderSummary();
     };
 
     const closeSummaryModal = () => {
@@ -148,7 +149,6 @@ The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chai
 
     if (viewSummaryBtn) {
         viewSummaryBtn.addEventListener("click", openSummaryModal);
-
     }
 
     if (closeSummaryBtn) {
@@ -158,7 +158,6 @@ The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chai
 
     if (closeSummaryAction) {
         closeSummaryAction.addEventListener("click", closeSummaryModal);
-
     }
 
     summaryModal.addEventListener("click", (e) => {
@@ -166,7 +165,4 @@ The main stages are Glycolysis, the Krebs cycle, and the Electron Transport Chai
             closeSummaryModal();
         }
     });
-
-
-
 });
