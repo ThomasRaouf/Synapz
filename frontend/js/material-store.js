@@ -51,15 +51,15 @@ function getMaterials() {
         const saved = localStorage.getItem(STORAGE_KEY);
 
         if (!saved) {
-            //put the demo materials on first visit
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultMaterials));
+            //if nothing in cache return demo materials
+
             return [...defaultMaterials];
         }
 
         return JSON.parse(saved);
     } catch (e) {
         console.error("Failed to load materials from local storage", e);
-        return [...defaultMaterials]
+        return [...defaultMaterials];
     }
 }
 
@@ -69,11 +69,4 @@ function saveMaterials(materials) {
     } catch (e) {
         console.error("Failed to save materials to local storage", e);
     }
-}
-
-function addMaterial(material) {
-    const materials = getMaterials();
-    materials.push(material);
-    saveMaterials(materials);
-    return materials;
 }

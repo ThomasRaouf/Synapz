@@ -248,11 +248,19 @@ function setupUploadModal() {
     const hasNotes = notesInput.value.trim().length > 0;
 
     if (!hasFile && !hasNotes) {
-      validationMessage.textContent =
-        "Please provide a file or paste your notes.";
-
+      validationMessage.textContent = "Please provide a file or paste your notes.";
       validationMessage.classList.remove("hidden");
       return;
+    }
+
+    if (hasFile) {
+      const ext = selectedFile.name.split('.').pop().toLowerCase();
+      const supportedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+      if (!supportedExts.includes(ext)) {
+        validationMessage.textContent = "Unsupported file type.";
+        validationMessage.classList.remove("hidden");
+        return;
+      }
     }
 
     submitBtn.disabled = true;
@@ -284,13 +292,13 @@ function setupUploadModal() {
         subject: responseData.material.subject || "General",
         title: responseData.material.title,
         type: responseData.material.type === "TEXT"
-          ? "Text"
-          : (responseData.material.type || "Text"),
+        ? "Text"
+        : (responseData.material.type || "Text"),
         status: "Processing",
         date: "Added just now",
         addedAt: Date.now(),
         source: responseData.material.source ||
-          (hasFile ? "file" : "notes")
+        (hasFile ? "file" : "notes")
       };
 
       addMaterial(newMaterial);
@@ -300,34 +308,31 @@ function setupUploadModal() {
         const processingResult =
           await processMaterialRequest(materialId);
 
-        newMaterial.status = "Completed";
+          newMaterial.status = "Completed";
 
-        console.log(
-          "Material processed successfully:",
-          processingResult
-        );
+          console.log(
+            "Material processed successfully:",
+            processingResult
+          );
+        } catch (processingError) {
+          newMaterial.status = "Failed";
 
-      } catch (processingError) {
-        newMaterial.status = "Failed";
+          console.error(
+            "Material processing failed:",
+            processingError
+          );
+        }
 
-        console.error(
-          "Material processing failed:",
-          processingError
-        );
-      }
-
-      // Save the updated status
-      const currentMaterials = getMaterials();
-      const updatedMaterials = currentMaterials.map(material =>
-        material.id === materialId
+        const currentMaterials = getMaterials();
+        const updatedMaterials = currentMaterials.map(material =>
+          material.id === materialId
           ? { ...material, status: newMaterial.status }
           : material
-      );
+        );
 
-      saveMaterials(updatedMaterials);
-      refreshMaterials();
-
-      closeModal();
+        saveMaterials(updatedMaterials);
+        refreshMaterials();
+        closeModal();
 
       if (uploadMessage) {
         uploadMessage.innerHTML =
@@ -355,6 +360,8 @@ function setupUploadModal() {
 
       submitBtn.querySelector(".btn-loader").classList.add("hidden");
     }
+
+
   });
 }
 

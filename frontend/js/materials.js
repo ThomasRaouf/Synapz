@@ -3,7 +3,44 @@
 let materialsData = [];
 let filteredMaterials = [];
 
-function loadMaterialsFromStore() {
+function formatRelativeDate(dateStr) {
+    const date = new Date(dateStr)
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffDays === 0) return "Added just now";
+    if (diffDays === 1) return "Added 1 day ago";
+    if (diffDays < 7) return `Added ${diffDays} days ago`;
+    if (diffDays < 14) return "Added 1 week ago";
+    return `Added ${Math.floor(diffDays/7)} weeks ago`;
+}
+
+async function loadMaterialsFromBackend() {
+    try {
+        const response = await getMaterialsRequest();
+        if (response && response.materials) {
+
+            materialsData = response.materials.map(m => ({
+                id: m.id,
+                user_id: m.user_id,
+                subject: m.subject,
+                title: m.title,
+                type: m.type,
+                status: m.status,
+                date: formatRelativeDate(m.created_at),
+                addedAt: new Date(m.created_at).getTime(),
+                source: m.source
+            }));
+            saveMaterials(materialsData);
+            filteredMaterials = [...materialsData];
+            return;
+        }
+    } catch (error) {
+        console.warn("Could not connect to the server. Showing saved local materials.", error);
+
+    }
+
     materialsData = getMaterials();
     filteredMaterials = [...materialsData];
 }
@@ -136,15 +173,15 @@ function clearFilters() {
 //modal handling transferred to workspace
 
 //refresh
-function refreshMaterials() {
-    loadMaterialsFromStore();
+async function refreshMaterials() {
+    await loadMaterialsFromBackend();
     renderDashboardMaterials();
     filterMaterials(); //re-apply existing filters
 }
 
 //init features
-function initMaterials() {
-    loadMaterialsFromStore();
+async function initMaterials() {
+    await loadMaterialsFromBackend();
     //render
     renderDashboardMaterials();
     filterMaterials(); //library grid
