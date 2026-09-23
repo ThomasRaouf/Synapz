@@ -30,7 +30,7 @@ def sanitize_filename(filename: str) -> str:
     safe = re.sub(r'[^\w\-\.]', '_', filename)
     return safe
 
-def upload_file(filename: str, file_data: bytes, content_type: str = "application/octet-stream") -> str:
+def upload_file(filename: str, file_data: bytes, user_id: str, content_type: str = "application/octet-stream") -> str:
 
 
 
@@ -39,7 +39,7 @@ def upload_file(filename: str, file_data: bytes, content_type: str = "applicatio
 
     safe_filename = sanitize_filename(filename)
     unique_folder = str(uuid.uuid4())
-    storage_path = f"materials/{unique_folder}/{safe_filename}"
+    storage_path = f"materials/{user_id}/{unique_folder}/{safe_filename}"
 
 
     response = client.storage.from_(bucket).upload(
@@ -64,30 +64,31 @@ def delete_file(storage_path: str):
 
         print(f"Failed to delete storage file {storage_path}: {e}")
 
-def insert_material(material_data: dict) -> dict:
+def insert_material(material_data: dict, user_id: str) -> dict:
 
 
 
     client = get_supabase_client()
+    material_data["user_id"] = user_id
     response = client.table("materials").insert(material_data).execute()
     if response.data:
         return response.data[0]
     raise Exception("Failed to insert material into database")
 
-def get_materials() -> list[dict]:
+def get_materials(user_id: str) -> list[dict]:
 
 
 
     client = get_supabase_client()
-    response = client.table("materials").select("*").order("created_at", desc=True).execute()
+    response = client.table("materials").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
     return response.data
 
-def get_material(material_id: int) -> dict | None:
+def get_material(material_id: int, user_id: str) -> dict | None:
 
 
 
     client = get_supabase_client()
-    response = client.table("materials").select("*").eq("id", material_id).execute()
+    response = client.table("materials").select("*").eq("id", material_id).eq("user_id", user_id).execute()
     if response.data:
         return response.data[0]
     return None

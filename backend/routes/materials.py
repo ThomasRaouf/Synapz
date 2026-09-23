@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status, Depends
 import mimetypes
 
 from models.material import MaterialResult, MaterialsResult
@@ -8,6 +8,7 @@ from services.material_service import (
     validate_text_material,
 )
 from services import supabase_service
+from dependencies.auth import get_current_user
 
 
 router = APIRouter(
@@ -26,6 +27,7 @@ async def create_material(
     material_type: str | None = Form(default=None, alias="type"),
     content: str | None = Form(default=None),
     file: UploadFile | None = File(default=None),
+    current_user = Depends(get_current_user),
 ):
     """
     Receive a text material or an uploaded file.
@@ -77,6 +79,7 @@ async def create_material(
             storage_path = supabase_service.upload_file(
                 filename=file.filename,
                 file_data=file_data,
+                user_id=current_user.id,
                 content_type=content_type
             )
         except Exception as e:
@@ -99,7 +102,7 @@ async def create_material(
         }
 
         try:
-            material = supabase_service.insert_material(material_data)
+            material = supabase_service.insert_material(material_data, user_id=current_user.id)
         except Exception as e:
             print(f"Database insert error: {e}")
 
@@ -139,7 +142,7 @@ async def create_material(
     }
 
     try:
-        material = supabase_service.insert_material(material_data)
+        material = supabase_service.insert_material(material_data, user_id=current_user.id)
     except Exception as e:
         print(f"Database insert error: {e}")
         raise HTTPException(
@@ -157,11 +160,11 @@ async def create_material(
     "",
     response_model=MaterialsResult,
 )
-def list_materials():
+def list_materials(current_user = Depends(get_current_user)):
     """Return stored materials"""
 
     try:
-        materials = supabase_service.get_materials()
+        materials = supabase_service.get_materials(user_id=current_user.id)
     except Exception as e:
         print(f"Failed to fetch materials: {e}")
         raise HTTPException(
@@ -178,11 +181,11 @@ def list_materials():
     "/{material_id}",
     response_model=MaterialResult,
 )
-def get_material(material_id: int):
+def get_material(material_id: int, current_user = Depends(get_current_user)):
     """Return a material by id"""
 
     try:
-        material = supabase_service.get_material(material_id)
+        material = supabase_service.get_material(material_id, user_id=current_user.id)
     except Exception as e:
         print(f"Failed to fetch materials: {e}")
         raise HTTPException(

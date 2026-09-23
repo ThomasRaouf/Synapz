@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from models.processing import ProcessingResult
 from services.document_processor import (
     DocumentProcessingError,
@@ -10,6 +10,8 @@ from services.material_service import (
     save_processed_text,
     get_processed_text,
 )
+from dependencies.auth import get_current_user
+from services import supabase_service
 
 router = APIRouter(
     prefix="/api/materials",
@@ -21,9 +23,9 @@ router = APIRouter(
     response_model=ProcessingResult,
 )
 
-def process_material(material_id: int):
+def process_material(material_id: int, current_user = Depends(get_current_user)):
 
-    material = get_material_by_id(material_id)
+    material = get_material_by_id(material_id, user_id=current_user.id)
 
     if material is None:
         raise HTTPException(
@@ -112,8 +114,8 @@ def process_material(material_id: int):
 @router.get(
     "/{material_id}/text",
 )
-def get_processed_material_text(material_id: int):
-    material = get_material_by_id(material_id)
+def get_processed_material_text(material_id: int, current_user = Depends(get_current_user)):
+    material = supabase_service.get_material(material_id, user_id=current_user.id)
 
     if material is None:
         raise HTTPException(
