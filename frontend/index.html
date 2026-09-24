@@ -18,7 +18,12 @@
 </head>
 
 <body>
-  <div class="app-layout">
+  <div id="auth-loading-overlay" style="position: fixed; inset: 0; background: var(--bg-main, #f9fafb); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999;">
+    <div class="logo" style="font-size: 24px; font-weight: 700; color: var(--primary-color, #4f46e5); margin-bottom: 16px; letter-spacing: 1px;">SYNAPZ</div>
+    <div style="font-size: 14px; color: var(--text-muted, #6b7280);">Checking your session...</div>
+  </div>
+
+  <div class="app-layout" id="app-layout" style="display: none;">
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
@@ -53,9 +58,17 @@
           </button>
           <h1 class="page-title">Dashboard</h1>
         </div>
-        <div class="profile-area">
-          <span class="profile-name">Alex Student</span>
-          <div class="profile-avatar">AS</div>
+        <div class="profile-area" id="profile-menu-toggle" style="cursor: pointer; position: relative;">
+          <span class="profile-name" id="user-display-name">Loading...</span>
+          <div class="profile-avatar" id="user-initials"></div>
+
+          <div id="account-dropdown" class="account-dropdown" style="position:absolute; top: calc(100% + 10px); right: 0; background: white; border: 1px solid var(--border-color, #e5e7eb); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 8px 0; min-width: 200px; display: none; z-index: 100;">
+            <div style="padding: 8px 16px; border-bottom: 1px solid var(--border-color, #e5e7eb); margin-bottom: 4px; padding-bottom: 12px;">
+              <div id="dropdown-name" style="font-weight: 600; font-size: 14px; margin-bottom: 2px;"></div>
+              <div id="dropdown-email" style="font-size: 12px; color: var(--text-muted, #6b7280); word-break: break-all;"></div>
+            </div>
+            <button id="logout-btn" style="width: 100%; text-align: left; background: none; border: none; padding: 10px 16px; font-size: 14px; cursor: pointer; color: #b91c1c; font-weight: 500; font-family: inherit;">Log Out</button>
+          </div>
         </div>
       </header>
 
@@ -66,7 +79,7 @@
           <!-- Welcome Section -->
           <section class="welcome-section">
             <div class="welcome-text">
-              <h2>Welcome back, Alex 👋</h2>
+              <h2 id="dashboard-greeting">Welcome back, 👋</h2>
               <p>Ready to keep learning? Pick up where you left off or add new study material.</p>
             </div>
             <button id="upload-material-btn" class="btn-primary">
@@ -412,6 +425,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/api.js"></script>
   <script src="js/material-store.js"></script>
   <script src="js/material-context.js"></script>
