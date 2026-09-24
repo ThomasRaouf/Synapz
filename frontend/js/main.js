@@ -480,7 +480,59 @@ function setupFlashcards() {
 
 
 // Initialize Dashboard when DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const user = await requireAuth()
+  if (!user) return;
+
+
+  document.getElementById("auth-loading-overlay").style.display = "none";
+  document.getElementById("app-layout").style.display = "flex";
+
+
+  document.getElementById("user-display-name").textContent = getUserDisplayName(user);
+  document.getElementById("user-initials").textContent = getUserInitials(user);
+
+  document.getElementById("dropdown-name").textContent = getUserDisplayName(user);
+  document.getElementById("dropdown-email").textContent = user.email || "";
+
+  const dashboardGreeting = document.getElementById("dashboard-greeting");
+  if (dashboardGreeting) {
+    const firstName = getUserDisplayName(user).split(' ')[0] || "there";
+    dashboardGreeting.textContent = `Welcome back, ${firstName} 👋`;
+  }
+
+
+  const profileMenuToggle = document.getElementById("profile-menu-toggle");
+  const accountDropdown = document.getElementById("account-dropdown");
+
+  if (profileMenuToggle && accountDropdown) {
+    profileMenuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      accountDropdown.style.display = accountDropdown.style.display === "none" ? "block" : "none";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!accountDropdown.contains(e.target)) {
+        accountDropdown.style.display = "none";
+      }
+    });
+
+
+    accountDropdown.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  }
+
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOutUser();
+      window.location.href = "login.html";
+    });
+  }
+  
   setupNavigation();
   initMaterials();
   setupInteractions();
