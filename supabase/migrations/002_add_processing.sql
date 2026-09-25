@@ -18,7 +18,7 @@ begin
 end;
 $$;
 
-drop trigger if exists materials_set_updated_at on public,materials;
+drop trigger if exists materials_set_updated_at on public.materials;
 
 create trigger materials_set_updated_at
     before update on public.materials

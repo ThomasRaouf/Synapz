@@ -132,7 +132,7 @@ def save_processed_text(
         {
             "processed_text": processed_text,
             "processed_at": processed_at,
-            "processeing_error": None,
+            "processing_error": None,
             "status": "Processed",
         },
     )
