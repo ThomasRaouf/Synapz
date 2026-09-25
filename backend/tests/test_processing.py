@@ -112,7 +112,7 @@ class TestDOCXParser:
             self.extract_pdf_text(b"not a docx")
 
     def test_valid_docx_returns_text(self):
-        docx_bytes = _make_minimal_docx
+        docx_bytes = _make_minimal_docx()
         text, page_count = self.extract_docx_text(docx_bytes)
         assert isinstance(text, str)
         assert "Test Paragraph one" in text
@@ -152,3 +152,143 @@ class TestProcessDocument:
         def test_text_empty_raises(self):
             with pytest.raises(self.DocumentProcessingError):
                 self.process_document(source_type="TEXT", file_data="   ")
+
+        # PDF
+
+        def test_pdf_material(self):
+            pdf_bytes = _make_minimal_pdf()
+            result = self.process_document(source_type="PDF", file_data=pdf_bytes)
+            assert result["success"] is True
+            assert isinstance(result["text"], str)
+            assert result["page_count"] >= 1
+
+        def test_pdf_requires_bytes(self):
+            with pytest.raises(self.DocumentProcessingError):
+                self.process_document(source_type="PDF", file_data="string not allowed")
+
+        def test_pdf_corrupt_raises(self):
+            with pytest.raises(self.DocumentProcessingError):
+                self.process_document(source_type="PDF", file_data=b"garbage")
+
+        # DOCX
+
+        def test_docx_material(self):
+                    docx_bytes = _make_minimal_docx()
+                    result = self.process_document(source_type="DOCX", file_data=docx_bytes)
+                    assert result["success"] is True
+                    assert "Test Paragraph" in result["text"]
+        
+        def test_docx_requires_bytes(self):
+            with pytest.raises(self.DocumentProcessingError):
+                self.process_document(source_type="DOCX", file_data="string not allowed")
+
+        # Unsupported types
+
+        def test_image_raises(self):
+            with pytest.raises(self.DocumentProcessingError, match="Unsupported"):
+                self.process_document(source_type="IMAGE", file_data=b"\xff\xd8\xff")
+
+        def test_unknown_type_raises(self):
+            with pytest.raises(self.DocumentProcessingError, match="Unsupported"):
+                self.process_document(source_type="SPREADSHEET", file_data=b"data")
+
+class TestMaterialService:
+
+    def _mock_client(self):
+        client = MagicMock()
+        return client
+
+    def test_get_material_by_id_returns_none_when_not_found(self):
+        with patch("services.supabase_service.get_supabase_client") as mock_get:
+            client = self._mock_client()
+            client.table.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value.data = []
+            mock_get.return_value = client
+
+            from services.material_service import get_material_by_id
+            result = get_material_by_id(9999, user_id="user-abc")
+            assert result is None
+
+    def test_get_material_by_id_returns_row_when_found(self):
+        row = {"id": 1, "title": "Bio Notes", "type": "TEXT", "status": "New"}
+        with patch("services.supabase_service.get_supabase_client") as mock_get:
+            client = self._mock_client()
+            client.table.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value.data = []
+            mock_get.return_value = client
+            
+            from services.material_service import get_material_by_id
+            result = get_material_by_id(1, user_id="user-abc")
+            assert result == row
+
+    def test_get_processed_returns_none_when_empty(self):
+        with patch("services.supabase_service.get_supabase_client") as mock_get:
+            client = self._mock_client()
+            client.table.return_value.select.return_value.eq.return_value.execute.return_value.data = [
+                {"processed_text": None}
+            ]
+            mock_get.return_value = client
+           
+            from services.material_service import get_processed_text
+            result = get_processed_text
+            assert result is None
+
+    def test_get_processed_returns_text_when_present(self):
+        with patch("services.supabase_service.get_supabase_client") as mock_get:
+            client = self._mock_client()
+            client.table.return_value.select.return_value.eq.return_value.execute.return_value.data = [
+                {"processed_text": "Extracted content heeeere..."}
+            ]
+            mock_get.return_value = client
+
+            from services.material_service import get_processed_text
+            result = get_processed_text(1)
+            assert result == "Extracted content heeeere..."
+
+
+class TestValidationHelpers:
+    def setup_method(self):
+        from services.material_service import validate_file_material, validate_text_material
+        self.validate_file = validate_file_material
+        self.validate_text = validate_text_material
+
+
+    def test_text_valid(self):
+        ok, err = self.validate_text("My Notes", "some contet", "TEXT")
+        assert ok is True
+        assert err is None
+
+    def test_text_missing_title(self):
+        ok, err = self.validate_text("", "contennnt", "TEXT")
+        assert ok is False
+
+    def test_text_missing_content(self):
+        ok, err = self.validate_text("Tilte", "   ", "TEXT")
+        assert ok is False
+
+    def test_text_wrong_type(self):
+        ok, err = self.validate_text("Tilte", "content", "PDF")
+        assert ok is False
+
+
+    def test_file_valid_pdf(self):
+        ok, detected, err = self.validate_file("lecture.pdf", 1024)
+        assert ok is True
+        assert detected == "PDF"
+        assert err is None
+
+    def test_file_valid_docx(self):
+        ok, detected, err = self.validate_file("lecture.docx", 2048)
+        assert ok is True
+        assert detected == "DOCX"
+
+    def test_file_too_large(self):
+        ok, detected, err = self.validate_file("big.pdf", 11 * 1024 * 1024)
+        assert ok is False
+        assert "10 MB" in err
+
+    def test_file_unsupported_type(self):
+        ok, detected, err = self.validate_file("lecture.xlsx", 1024)
+        assert ok is False
+
+    def test_file_no_filename(self):
+        ok, detected, err = self.validate_file(None, 1024)
+        assert ok is False                
