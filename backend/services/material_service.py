@@ -58,7 +58,7 @@ def validate_file_material(
 # Processing pipeline helpers
 
 def get_material_by_id(material_id: int, user_id: str) -> dict | None:
-    return supabase_service.get_material(material_id, user_id=uesr_id)
+    return supabase_service.get_material(material_id, user_id=user_id)
 
 def get_material_file(material_id: int, user_id: str) -> bytes | None:
     material = supabase_service.get_material(material_id, user_id=user_id)

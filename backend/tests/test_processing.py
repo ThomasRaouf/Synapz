@@ -5,32 +5,19 @@ from unittest.mock import MagicMock, patch
 # Helpers used by multiple tests
 
 def _make_minimal_pdf() -> bytes:
-    return (
-        b"%PDF-1.4\n"
-        b"1 0 obj\n<< /Type  /Catalog /Pages 2 0 R >>\nendobj\n"
-        b"2 0 obj\n<< /Type  /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n"
-        b"1 0 obj\n<< /Type  /Pages /Parent 2 0 R /Mediabox [0 0 612 792]\n>>\nendobj\n"
-        b"   /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n"
-        b"4 0 obj\n<< /Length 44 >>\nstream\n"
-        b"BT /F1 12 Tf 100 700 Td (Hello World) Tj ET\n"
-        b"endstream\nendobj\n"
-        b"5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"
-        b"xref\n0 6\n"
-        b"0000000000 65535 f \n"
-        b"0000000009 00000 n \n"
-        b"0000000058 00000 n \n"
-        b"0000000115 00000 n \n"
-        b"0000000274 00000 n \n"
-        b"0000000370 00000 n \n"
-        b"trailer\n<< /Size 6 /Root 1 0 R >>\n"
-        b"startxref\n450\n%%EOF\n"
-    )
+    import fitz
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((72, 72), "Hello World")
+    pdf_bytes = doc.tobytes()
+    doc.close()
+    return pdf_bytes
 
 def _make_minimal_docx() -> bytes:
     from docx import Document
     doc = Document()
-    doc.add_paragraph("Test paragraph one")
-    doc.add_paragraph("Test patagraph two")
+    doc.add_paragraph("Test Paragraph one")
+    doc.add_paragraph("Test Paragraph two")
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
@@ -105,11 +92,11 @@ class TestDOCXParser:
 
     def test_raises_on_empty_bytes(self):
         with pytest.raises(self.DOCXExtractionError, match="empty"):
-            self.extract_pdf_text(b"")
+            self.extract_docx_text(b"")
 
     def test_raises_on_corrupt_bytes(self):
         with pytest.raises(self.DOCXExtractionError):
-            self.extract_pdf_text(b"not a docx")
+            self.extract_docx_text(b"not a docx")
 
     def test_valid_docx_returns_text(self):
         docx_bytes = _make_minimal_docx()
@@ -212,7 +199,7 @@ class TestMaterialService:
         row = {"id": 1, "title": "Bio Notes", "type": "TEXT", "status": "New"}
         with patch("services.supabase_service.get_supabase_client") as mock_get:
             client = self._mock_client()
-            client.table.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value.data = []
+            client.table.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value.data = [row]
             mock_get.return_value = client
             
             from services.material_service import get_material_by_id
@@ -228,7 +215,7 @@ class TestMaterialService:
             mock_get.return_value = client
            
             from services.material_service import get_processed_text
-            result = get_processed_text
+            result = get_processed_text(1)
             assert result is None
 
     def test_get_processed_returns_text_when_present(self):
@@ -291,4 +278,4 @@ class TestValidationHelpers:
 
     def test_file_no_filename(self):
         ok, detected, err = self.validate_file(None, 1024)
-        assert ok is False                
+        assert ok is False
