@@ -2,11 +2,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status, De
 import mimetypes
 
 from models.material import MaterialResult, MaterialsResult
-from services.material_service import (
-    get_material_file,
-    validate_file_material,
-    validate_text_material,
-)
+from services.material_service import get_material_file, validate_file_material, validate_text_material
 from services import supabase_service
 from dependencies.auth import get_current_user
 
@@ -27,7 +23,7 @@ async def create_material(
     material_type: str | None = Form(default=None, alias="type"),
     content: str | None = Form(default=None),
     file: UploadFile | None = File(default=None),
-    current_user = Depends(get_current_user),
+    current_user=Depends(get_current_user),
 ):
     """
     Receive a text material or an uploaded file.
@@ -80,14 +76,14 @@ async def create_material(
                 filename=file.filename,
                 file_data=file_data,
                 user_id=current_user.id,
-                content_type=content_type
+                content_type=content_type,
             )
         except Exception as e:
 
-            print(f"Storage upload error: {e}")
+            print(f"[materials] Storage upload error: {e}")
             raise HTTPException(
                 status_code=500,
-                detail="We couldn't save your file. Please try again."
+                detail="We couldn't save your file. Please try again.",
             )
 
 
@@ -104,13 +100,12 @@ async def create_material(
         try:
             material = supabase_service.insert_material(material_data, user_id=current_user.id)
         except Exception as e:
-            print(f"Database insert error: {e}")
+            print(f"[materials]Database insert error: {e}")
 
             supabase_service.delete_file(storage_path)
             raise HTTPException(
                 status_code=500,
                 detail="We couldn't save your material. Please try again.",
-                file_data=file_data
             )
 
         return {
@@ -134,21 +129,21 @@ async def create_material(
     material_data = {
         "title": title.strip(),
         "subject": "General",
-        "type": "Text",
+        "type": "TEXT",
         "status": "New",
+        "source_text": content.strip(),
         "storage_path": None,
         "original_filename": None,
-        "source": "notes"
+        "source": "notes",
     }
 
     try:
         material = supabase_service.insert_material(material_data, user_id=current_user.id)
     except Exception as e:
-        print(f"Database insert error: {e}")
+        print(f"[materials]Database insert error: {e}")
         raise HTTPException(
             status_code=500,
             detail="We couldn't save your material. Please try again.",
-            content=content.strip(),
         )
 
     return {
@@ -160,16 +155,16 @@ async def create_material(
     "",
     response_model=MaterialsResult,
 )
-def list_materials(current_user = Depends(get_current_user)):
+def list_materials(current_user=Depends(get_current_user)):
     """Return stored materials"""
 
     try:
         materials = supabase_service.get_materials(user_id=current_user.id)
     except Exception as e:
-        print(f"Failed to fetch materials: {e}")
+        print(f"[materials] Failed to fetch materials: {e}")
         raise HTTPException(
             status_code=500,
-            detail="The server is unavailable right now. Please try again."
+            detail="The server is unavailable right now. Please try again.",
         )
     
     return {
@@ -181,16 +176,16 @@ def list_materials(current_user = Depends(get_current_user)):
     "/{material_id}",
     response_model=MaterialResult,
 )
-def get_material(material_id: int, current_user = Depends(get_current_user)):
+def get_material(material_id: int, current_user=Depends(get_current_user)):
     """Return a material by id"""
 
     try:
         material = supabase_service.get_material(material_id, user_id=current_user.id)
     except Exception as e:
-        print(f"Failed to fetch materials: {e}")
+        print(f"[materials] Failed to fetch materials: {e}")
         raise HTTPException(
             status_code=500,
-            detail="The server is unavailable right now. Please try again."
+            detail="The server is unavailable right now. Please try again.",
         )
     
     if material is None:
