@@ -148,7 +148,7 @@ def process_material(
         text=result["text"],
         character_count=result["character_count"],
         word_count=result["word_count"],
-        page_count=result.get("page_count")
+        page_count=result.get("page_count"),
         processed_at=processed_at,
     )
 
