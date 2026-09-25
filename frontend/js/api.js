@@ -1,12 +1,32 @@
 const API_BASE_URL = window.SYNAPZ_API_URL || "http://127.0.0.1:8000";
-async function apiRequest(endpoint, options = {}){
+
+async function apiRequest(endpoint, options = {}) {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`,options);
+
+    const session = typeof getCurrentSession === 'function' ? await getCurrentSession() : null;
+
+    if (session?.access_token) {
+      options.headers = options.headers || {};
+
+      if (!options.headers['Authorization']) {
+        options.headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+    }
+
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
     const isJson = response.headers.get('content-type')?.includes('application/json');
     const data = isJson ? await response.json() : null;
 
-
     if (!response.ok) {
+      if (response.status === 401) {
+
+        if (typeof signOutUser === 'function') {
+          await signOutUser();
+        }
+        window.location.href = "login.html";
+        throw new Error("Your session has expired. Please log in again.")
+      }
+      
       let errorMessage = "We couldn't process this material, please try again.";
       if (data && data.detail) {
         if (typeof data.detail === 'string') {
