@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synapz - Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-logo">SYNAPZ</div>
+        <h1 class="auth-title">Create your Synapz account</h1>
+        <p class="auth-subtitle">Join us to organize your study materials.</p>
+        <div id="auth-error" class="auth-error"></div>
+        <div id="auth-success" class="auth-success"></div>
+
+        <form id="signup-form" class="auth-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" required placeholder="Alex Student">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required minlength="6" placeholder="********">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" required minlength="6" placeholder="********">
+            </div>
+
+            <button type="submit" class="auth-btn" id="submit-btn">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loader" style="display: none;"></span>
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <span>Already have an account? <a href="login.html">Log in</a></span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            const session = await getCurrentSession();
+            if (session) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            const signupForm = document.getElementById("signup-form");
+            const errorDiv = document.getElementById("auth-error");
+            const successDiv = document.getElementById("auth-success");
+            const submitBtn = document.getElementById("submit-btn");
+            const btnText = submitBtn.querySelector(".btn-text");
+            const btnLoader = submitBtn.querySelector(".btn-loader");
+
+            signupForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                errorDiv.style.display = "none";
+                successDiv.style.display = "none";
+
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
+
+                if (password !== confirmPassword) {
+                    errorDiv.textContent = "Passwords do not match.";
+                    errorDiv.style.display = "block";
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                btnText.textContent = "Creating Account...";
+                btnLoader.style.display = "inline-block";
+
+                try {
+                    const { data, error } = await signUpUser(name, email, password);
+                    if (error) throw error;
+
+                    if (data?.session) {
+
+                        successDiv.textContent = "Account created. Redirecting...";
+                        successDiv.style.display = "block";
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 1000);
+                    } else {
+
+                        successDiv.textContent = "Account created. Check your email to confirm your account before logging in.";
+                        successDiv.style.display = "block";
+                        signupForm.reset();
+
+                        submitBtn.disabled = false;
+                        btnText.textContent = "Create Account";
+                        btnLoader.style.display = "none";
+                    }
+                } catch (err) {
+                    errorDiv.textContent = err.message || "Could not create account. Please try again.";
+                    errorDiv.style.display = "block";
+
+                    submitBtn.disabled = false;
+                    btnText.textContent = "Create Account";
+                    btnLoader.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
